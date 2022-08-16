@@ -1,0 +1,23 @@
+{
+  "name": "willow",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seiyab/willow.git"
+  },
+  "author": "Seiya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seiyab/willow/issues"
+  },
+  "homepage": "https://github.com/seiyab/willow#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "truffle": "^5.5.26"
+  }
+}
