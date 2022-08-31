@@ -11,27 +11,20 @@ contract Willow {
   Painting[] paintings;
 
   struct Painting {
-    Square[] squares;
     address owner;
     address creator;
+    bytes[] data;
   }
 
-  struct Square {
-    uint8 x;
-    uint8 y;
-    uint8 width;
-    uint8 height;
-    uint16 color;
+  constructor() {
   }
 
-  constructor() public {
-  }
-
-  function create(Square[] calldata squares) external returns (uint256) {
+  function create(bytes[] calldata data) external returns (uint256) {
     uint256 id = paintings.length;
     Painting storage p = paintings.push();
-    for (uint i=0; i < squares.length; i++) {
-      p.squares.push(squares[i]);
+    for (uint i=0; i < data.length; i++) {
+      require(validRect(data[i]));
+      p.data.push(data[i]);
     }
     return id;
   }
@@ -39,31 +32,58 @@ contract Willow {
   function draw(uint256 paintingID) public view returns (string memory) {
     bytes memory pack = abi.encodePacked('<svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">');
     Painting storage p = paintings[paintingID];
-    for (uint i = 0; i < p.squares.length; i++) {
-      pack = abi.encodePacked(
-        pack,
-        '<rect x="',
-        p.squares[i].x.toString(),
-        '" y="',
-        p.squares[i].y.toString(),
-        '" width="',
-        p.squares[i].width.toString(),
-        '" height="',
-        p.squares[i].height.toString(),
-        '" fill="',
-        colorString(p.squares[i].color),
-        '" />'
-      );
+    for (uint i = 0; i < p.data.length; i++) {
+      bytes memory item;
+      bool ok;
+      (item, ok) = rect(p.data[i]);
+      if (ok) {
+        pack = abi.encodePacked(pack, item);
+        continue;
+      }
     }
     pack = abi.encodePacked(pack, '</svg>');
     return string(pack);
   }
 
-  function colorString(uint16 colorUint) internal pure returns (string memory) {
-    uint32 r = ((colorUint >> 12) % 0x10) * 0x11;
-    uint32 g = ((colorUint >> 8) % 0x10) * 0x11;
-    uint32 b = ((colorUint >> 4) % 0x10) * 0x11;
-    uint32 a = (colorUint % 0x10);
+  function rect(bytes memory d) public pure returns (bytes memory str, bool ok) {
+    if (!validRect(d)) {
+      return ("", false);
+    }
+    return (
+      abi.encodePacked(
+        '<rect x="',
+        uint8(d[1]).toString(),
+        '" y="',
+        uint8(d[2]).toString(),
+        '" width="',
+        uint8(d[3]).toString(),
+        '" height="',
+        uint8(d[4]).toString(),
+        '" fill="',
+        colorString(d[5], d[6]),
+        '" stroke="',
+        colorString(d[7], d[8]),
+        '" />'
+      ),
+      true
+    );
+  }
+
+  function validRect(bytes memory d) public pure returns (bool ok) {
+    if (d[0] != 0x01) {
+      return false;
+    }
+    if (d.length != 9) {
+      return false;
+    }
+    return true;
+  }
+
+  function colorString(bytes1 x, bytes1 y) internal pure returns (string memory) {
+    uint32 r = (uint8(x) >> 4) * 0x11;
+    uint32 g = (uint8(x) % 0x10) * 0x11;
+    uint32 b = (uint8(y) >> 4) * 0x11;
+    uint32 a = (uint8(y) % 0x10);
     string[0x10] memory alphaStrings = ["0", "0.067", "0.133", "0.2", "0.267", "0.333", "0.4", "0.467", "0.533", "0.6", "0.667", "0.733", "0.8", "0.867", "0.933", "1.0"];
     return string(abi.encodePacked(
       'rgba(',
