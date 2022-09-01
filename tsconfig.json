@@ -3,5 +3,9 @@
   "include": ["webui/**/*", "test/**/*", "types/**/*"],
   "compilerOptions": {
     "baseUrl": "."
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true
   }
 }

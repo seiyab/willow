@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "truffle test",
+    "test": "NODE_PATH=. truffle test",
     "dev-server": "truffle develop",
     "generate-types": "truffle compile && typechain --target=truffle-v5 'build/contracts/*.json'"
   },
