@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+library Lib {
+  using Strings for uint8;
+  using Strings for uint16;
+  using Strings for uint32;
+
+  function colorString(bytes1 x, bytes1 y) public pure returns (string memory) {
+    uint32 r = (uint8(x) >> 4) * 0x11;
+    uint32 g = (uint8(x) % 0x10) * 0x11;
+    uint32 b = (uint8(y) >> 4) * 0x11;
+    uint32 a = (uint8(y) % 0x10);
+    string[0x10] memory alphaStrings = ["0", "0.067", "0.133", "0.2", "0.267", "0.333", "0.4", "0.467", "0.533", "0.6", "0.667", "0.733", "0.8", "0.867", "0.933", "1.0"];
+    return string(abi.encodePacked(
+      'rgba(',
+      r.toString(),
+      ',',
+      g.toString(),
+      ',',
+      b.toString(),
+      ',',
+      alphaStrings[a],
+      ')'
+    ));
+  }
+}
