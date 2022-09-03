@@ -5,11 +5,11 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Decoder.sol";
 import "./Lib.sol";
 
-contract Rect is Decoder {
+contract Ellipse is Decoder {
   using Strings for uint8;
   
   function valid(bytes memory d) public pure override returns (bool) {
-    if (d[0] != 0x01) {
+    if (d[0] != 0x02) {
       return false;
     }
     if (d.length != 9) {
@@ -24,13 +24,13 @@ contract Rect is Decoder {
     }
     return (
       abi.encodePacked(
-        '<rect x="',
+        '<ellipse cx="',
         uint8(d[1]).toString(),
-        '" y="',
+        '" cy="',
         uint8(d[2]).toString(),
-        '" width="',
+        '" rx="',
         uint8(d[3]).toString(),
-        '" height="',
+        '" ry="',
         uint8(d[4]).toString(),
         '" fill="',
         Lib.colorString(d[5], d[6]),

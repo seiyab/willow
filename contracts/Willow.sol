@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Decoder.sol";
 import "./Rect.sol";
+import "./Ellipse.sol";
 
 contract Willow {
   Decoder[] decoders;
@@ -18,6 +19,7 @@ contract Willow {
 
   constructor() {
     decoders.push(new Rect());
+    decoders.push(new Ellipse());
   }
 
   function create(bytes[] calldata data) external returns (uint256) {
