@@ -6,7 +6,9 @@
   "scripts": {
     "test": "NODE_PATH=. npx mocha './webui/**/*.ts' && NODE_PATH=. truffle test",
     "dev-server": "truffle develop",
-    "generate-types": "truffle compile && typechain --target=truffle-v5 'build/contracts/*.json'"
+    "generate-types": "truffle compile && typechain --target=truffle-v5 'build/contracts/*.json'",
+    "format": "prettier --write .",
+    "check": "prettier --check . && npm run generate-types && tsc && npm test"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,7 @@
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.14",
     "mocha": "^9.2.2",
+    "prettier": "2.7.1",
     "truffle": "^5.5.26",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.0",

@@ -1,3 +1,3 @@
 export type Encoder = {
-    encode: () => number[];
-}
+  encode: () => number[];
+};
