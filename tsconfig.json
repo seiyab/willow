@@ -2,7 +2,8 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "include": ["webui/**/*", "test/**/*", "types/**/*"],
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "noEmit": true
   },
   "ts-node": {
     "transpileOnly": true,

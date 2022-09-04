@@ -2,11 +2,13 @@ import { promises as fs } from 'fs'
 import { WillowInstance } from 'types/truffle-contracts';
 import { rgba } from 'webui/element/color';
 import { ellipse } from 'webui/element/ellipse';
+import { quote } from 'webui/element/quote';
+import { rect } from 'webui/element/rect';
 import { bytes } from "webui/encode/bytes";
 
 const Willow = artifacts.require("Willow");
 
-contract("assert svg", ([alice]) => {
+contract("assert svg", ([alice, bob]) => {
   let contractInstance: WillowInstance;
   beforeEach(async () => {
     contractInstance = await Willow.new();
@@ -38,6 +40,37 @@ contract("assert svg", ([alice]) => {
     return assert.equal(
       svg,
       await fs.readFile(`${__dirname}/svgs/ellipses.svg`, {encoding: 'utf-8'})
+    );
+  })
+
+  it("quote", async () => {
+    await contractInstance.create(
+      [
+        rect({x: 50, y: 50, width: 150, height: 150, fill: rgba(15, 0, 0, 15), stroke: rgba(0, 0, 0, 0)}),
+      ].map((e) => e.encode()).map(bytes),
+      {from: alice}
+    )
+
+    await contractInstance.create(
+      [
+        ellipse({x: 125, y: 125, cx: 80, cy: 80, fill: rgba(0, 0, 15, 7), stroke: rgba(0, 0, 0, 0)}),
+      ].map((e) => e.encode()).map(bytes),
+      {from: bob}
+    )
+
+    await contractInstance.create(
+      [
+        quote({id: 0}),
+        quote({id: 1}),
+      ].map((e) => e.encode()).map(bytes),
+      {from: alice}
+    )
+
+    const svg = await contractInstance.draw(2);
+
+    return assert.equal(
+      svg,
+      await fs.readFile(`${__dirname}/svgs/quote.svg`, {encoding: 'utf-8'})
     );
   })
 });
