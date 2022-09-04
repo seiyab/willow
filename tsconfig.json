@@ -1,12 +1,26 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
-  "include": ["webui/**/*", "test/**/*", "types/**/*"],
+  "include": [
+    "webui/**/*",
+    "test/**/*",
+    "types/**/*",
+    "pages"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "preserve",
+    "jsxImportSource": "react",
+    "allowJs": false,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "ts-node": {
     "transpileOnly": true,
     "files": true
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
