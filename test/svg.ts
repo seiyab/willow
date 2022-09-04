@@ -1,10 +1,10 @@
 import { promises as fs } from "fs";
 import { WillowInstance } from "types/truffle-contracts";
-import { rgba } from "webui/element/color";
-import { ellipse } from "webui/element/ellipse";
-import { quote } from "webui/element/quote";
-import { rect } from "webui/element/rect";
-import { bytes } from "webui/encode/bytes";
+import { rgba } from "lib/element/color";
+import { ellipse } from "lib/element/ellipse";
+import { quote } from "lib/element/quote";
+import { rect } from "lib/element/rect";
+import { bytes } from "lib/encode/bytes";
 
 const Willow = artifacts.require("Willow");
 

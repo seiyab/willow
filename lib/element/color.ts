@@ -1,4 +1,4 @@
-import { Encoder } from "webui/encode/encoder";
+import { Encoder } from "lib/encode/encoder";
 
 export type Color = Record<"r" | "g" | "b" | "a", number>;
 

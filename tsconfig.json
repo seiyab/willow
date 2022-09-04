@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
-  "include": ["webui/**/*", "test/**/*", "types/**/*", "pages"],
+  "include": ["lib/**/*", "test/**/*", "types/**/*", "pages"],
   "compilerOptions": {
     "baseUrl": ".",
     "noEmit": true,

@@ -1,5 +1,5 @@
-import { Encoder } from "webui/encode/encoder";
-import { range } from "webui/util";
+import { Encoder } from "lib/encode/encoder";
+import { range } from "lib/util";
 
 export type Quote = {
   id: number; // is bigint better?;
