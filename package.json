@@ -8,7 +8,7 @@
     "dev-server": "truffle develop",
     "generate-types": "truffle compile && typechain --target=truffle-v5 'build/contracts/*.json'",
     "format": "prettier --write .",
-    "check": "prettier --check . && npm run generate-types && tsc && npm test"
+    "check": "prettier --check . && npm run generate-types && tsc && next lint && npm test"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,9 @@
     "@typechain/truffle-v5": "^8.0.1",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.14",
+    "@types/react": "^18.0.18",
+    "eslint-config-next": "12.2.5",
+    "eslint-config-prettier": "^8.5.0",
     "mocha": "^9.2.2",
     "next": "^12.2.5",
     "prettier": "2.7.1",
@@ -35,8 +38,5 @@
     "ts-node": "^10.9.1",
     "typechain": "^8.1.0",
     "typescript": "^4.8.2"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.18"
   }
 }
