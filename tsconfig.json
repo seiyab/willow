@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
-  "include": ["lib/**/*", "test/**/*", "types/**/*", "pages"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "baseUrl": ".",
     "noEmit": true,
