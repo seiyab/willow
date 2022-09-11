@@ -13,6 +13,9 @@ const Header: React.FC<Props> = () => {
         header {
           background-color: #222;
           color: #fff;
+          font-size: 24px;
+          padding-top: 10px;
+          padding-bottom: 10px;
         }
         div {
           margin: 0 auto;
