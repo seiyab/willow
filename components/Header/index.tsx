@@ -1,5 +1,4 @@
 import * as React from "react";
-import Style from "styled-jsx/style";
 
 type Props = {
   children?: never;
