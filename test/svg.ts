@@ -1,10 +1,8 @@
 import { promises as fs } from "fs";
 import { WillowInstance } from "types/truffle-contracts";
-import { rgba } from "lib/element/color";
-import { ellipse } from "lib/element/ellipse";
-import { quote } from "lib/element/quote";
-import { rect } from "lib/element/rect";
+import { rgba } from "lib/encode/color";
 import { bytes } from "lib/encode/bytes";
+import { ellipse, quote, rect } from "lib/encode/encoder";
 
 const Willow = artifacts.require("Willow");
 
@@ -33,6 +31,7 @@ contract("assert svg", ([alice, bob]) => {
     await contractInstance.create(
       [
         ellipse({
+          type: "ellipse",
           x: 100,
           y: 50,
           cx: 60,
@@ -41,6 +40,7 @@ contract("assert svg", ([alice, bob]) => {
           stroke: rgba(5, 6, 7, 8),
         }),
         ellipse({
+          type: "ellipse",
           x: 200,
           y: 150,
           cx: 40,
@@ -65,6 +65,7 @@ contract("assert svg", ([alice, bob]) => {
     await contractInstance.create(
       [
         rect({
+          type: "rect",
           x: 50,
           y: 50,
           width: 150,
@@ -81,6 +82,7 @@ contract("assert svg", ([alice, bob]) => {
     await contractInstance.create(
       [
         ellipse({
+          type: "ellipse",
           x: 125,
           y: 125,
           cx: 80,
@@ -95,7 +97,9 @@ contract("assert svg", ([alice, bob]) => {
     );
 
     await contractInstance.create(
-      [quote({ id: 0 }), quote({ id: 1 })].map((e) => e.encode()).map(bytes),
+      [quote({ type: "quote", id: 0 }), quote({ type: "quote", id: 1 })]
+        .map((e) => e.encode())
+        .map(bytes),
       { from: alice }
     );
 
