@@ -1,8 +1,8 @@
 import { promises as fs } from "fs";
 import { WillowInstance } from "types/truffle-contracts";
-import { rgba } from "lib/encode/color";
 import { bytes } from "lib/encode/bytes";
 import { ellipse, quote, rect } from "lib/encode/encoder";
+import { rgba } from "lib/element/color";
 
 const Willow = artifacts.require("Willow");
 
@@ -32,19 +32,19 @@ contract("assert svg", ([alice, bob]) => {
       [
         ellipse({
           type: "ellipse",
-          x: 100,
-          y: 50,
-          cx: 60,
-          cy: 30,
+          cx: 100,
+          cy: 50,
+          rx: 60,
+          ry: 30,
           fill: rgba(1, 2, 3, 4),
           stroke: rgba(5, 6, 7, 8),
         }),
         ellipse({
           type: "ellipse",
-          x: 200,
-          y: 150,
-          cx: 40,
-          cy: 80,
+          cx: 200,
+          cy: 150,
+          rx: 40,
+          ry: 80,
           fill: rgba(8, 7, 6, 5),
           stroke: rgba(4, 3, 2, 1),
         }),
@@ -83,10 +83,10 @@ contract("assert svg", ([alice, bob]) => {
       [
         ellipse({
           type: "ellipse",
-          x: 125,
-          y: 125,
-          cx: 80,
-          cy: 80,
+          cx: 125,
+          cy: 125,
+          rx: 80,
+          ry: 80,
           fill: rgba(0, 0, 15, 7),
           stroke: rgba(0, 0, 0, 0),
         }),

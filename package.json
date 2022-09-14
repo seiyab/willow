@@ -29,6 +29,7 @@
     "@types/react": "^18.0.18",
     "eslint-config-next": "12.2.5",
     "eslint-config-prettier": "^8.5.0",
+    "immer": "^9.0.15",
     "mocha": "^9.2.2",
     "next": "^12.2.5",
     "prettier": "2.7.1",
@@ -37,6 +38,7 @@
     "truffle": "^5.5.26",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.0",
-    "typescript": "^4.8.2"
+    "typescript": "^4.8.2",
+    "use-context-selector": "^1.4.1"
   }
 }

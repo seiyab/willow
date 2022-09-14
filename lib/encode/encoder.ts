@@ -35,9 +35,9 @@ export const rect = ({ x, y, width, height, fill, stroke }: Rect): Encoder => {
   };
 };
 
-export const ellipse = ({ x, y, cx, cy, fill, stroke }: Ellipse): Encoder => {
+export const ellipse = ({ cx, cy, rx, ry, fill, stroke }: Ellipse): Encoder => {
   const [f, s] = [color(fill), color(stroke)];
-  const encode = () => [0x02, x, y, cx, cy, ...f.encode(), ...s.encode()];
+  const encode = () => [0x02, cx, cy, rx, ry, ...f.encode(), ...s.encode()];
   return {
     encode,
   };
