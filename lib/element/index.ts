@@ -1,6 +1,7 @@
 import { Color } from "./color";
 
 export type Element = Quote | Rect | Ellipse;
+export type ElementType = Element["type"];
 
 export type Quote = {
   type: "quote";
@@ -19,10 +20,10 @@ export type Rect = {
 
 export type Ellipse = {
   type: "ellipse";
-  x: number;
-  y: number;
   cx: number;
   cy: number;
+  rx: number;
+  ry: number;
   fill: Color;
   stroke: Color;
 };
