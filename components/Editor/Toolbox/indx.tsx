@@ -5,12 +5,20 @@ const Toolbox: React.FC = () => {
   const setTool = useSelector(({ actions }) => actions.setTool);
   return (
     <div className="flex-center container">
-      <button className="rect" onClick={() => setTool("rect")}>
+      <button
+        className="rect"
+        onClick={() => setTool("rect")}
+        aria-label="rect"
+      >
         <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
           <rect x="6" y="6" width="18" height="18" fill="#555" />
         </svg>
       </button>
-      <button className="ellipse" onClick={() => setTool("ellipse")}>
+      <button
+        className="ellipse"
+        onClick={() => setTool("ellipse")}
+        aria-label="ellipse"
+      >
         <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
           <ellipse cx="15" cy="15" rx="10" ry="10" fill="#555" />
         </svg>

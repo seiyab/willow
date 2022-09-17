@@ -36,6 +36,7 @@ const Canvas: React.FC = () => {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
+      data-testid="canvas"
     >
       {elements.map(({ id, value }) => (
         <SVGElem key={id} value={value} />
