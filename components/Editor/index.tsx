@@ -1,14 +1,21 @@
 import * as React from "react";
-import { useSelector, withState } from "components/Editor/state";
+import { withState } from "components/Editor/state";
 import Canvas from "./Canvas";
 import Toolbox from "./Toolbox/indx";
+import Submit from "./Submit";
+import Frame from "components/Frame";
 
 const Editor: React.FC = () => {
   return (
     <div>
       <div className="flex-center">
+        <Submit />
+      </div>
+      <div className="flex-center">
         <div className="center">
-          <Canvas />
+          <Frame>
+            <Canvas />
+          </Frame>
         </div>
       </div>
       <div className="flex-center toolbox-container">
