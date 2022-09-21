@@ -1,6 +1,17 @@
-import { Ellipse, Quote, Rect } from "lib/element";
+import { do_ } from "@seiyab/do-expr";
+import { Element, Ellipse, Quote, Rect } from "lib/element";
 import { range } from "lib/util";
+import { bytes } from "./bytes";
 import { color } from "./color";
+
+export const encode = (e: Element): string => {
+  const encoder = do_(() => {
+    if (e.type === "rect") return rect(e);
+    if (e.type === "ellipse") return ellipse(e);
+    throw new Error();
+  });
+  return bytes(encoder.encode());
+};
 
 export type Encoder = {
   encode: () => number[];

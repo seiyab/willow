@@ -80,6 +80,10 @@ contract Willow {
     return string(pack);
   }
 
+  function length() public view returns (uint256) {
+    return paintings.length;
+  }
+
   function validQuote(bytes memory d) internal pure returns (bool ok) {
     if (d[0] != 0x00) {
       return false;

@@ -20,6 +20,12 @@ const Layout: React.FC<Props> = ({ children }) => (
           padding: unset;
         }
 
+        ul {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+        }
+
         .flex-center {
           display: flex;
           align: center;
