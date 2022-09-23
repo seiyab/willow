@@ -2,11 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "./Lib.sol";
 import "./Decoder.sol";
 import "./Rect.sol";
 import "./Ellipse.sol";
 
 contract Willow {
+  using Strings for int16;
+  using Strings for uint16;
+
   Decoder[] decoders;
 
   Painting[] paintings;
@@ -89,7 +93,8 @@ contract Willow {
       return false;
     }
     uint addr_length = 256 / 8;
-    if (d.length != addr_length + 1) {
+    uint len = addr_length + 5;
+    if (d.length != len) {
       return false;
     }
     return true;
@@ -106,8 +111,24 @@ contract Willow {
       id += uint8(d[i+1]);
     }
     return (
-      abi.encodePacked(elements(id)),
+      abi.encodePacked(
+        '<g transform="translate(125,125) translate(',
+        Lib.intToString(b2i(d[addr_length+1]) * 2 - 250),
+        ',',
+        Lib.intToString(b2i(d[addr_length+2]) * 2 - 250),
+        ') rotate(',
+        (uint16(uint8(d[addr_length+3])) + (uint16(uint8(d[addr_length+4])) / 128) * 256).toString(),
+        ') scale(',
+        Lib.scaleString(uint8(d[addr_length+4]) % 128),
+        ') translate(-125,-125)">',
+        elements(id),
+        '</g>'
+      ),
       true
     );
+  }
+
+  function b2i(bytes1 b) internal pure returns (int) {
+    return int(uint(uint8(b)));
   }
 }
