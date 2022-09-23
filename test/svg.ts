@@ -86,7 +86,7 @@ contract("assert svg", ([alice, bob]) => {
           cx: 125,
           cy: 125,
           rx: 80,
-          ry: 80,
+          ry: 100,
           fill: rgba(0, 0, 15, 7),
           stroke: rgba(0, 0, 0, 0),
         }),
@@ -97,7 +97,17 @@ contract("assert svg", ([alice, bob]) => {
     );
 
     await contractInstance.create(
-      [quote({ type: "quote", id: 0 }), quote({ type: "quote", id: 1 })]
+      [
+        quote({ type: "quote", id: 0, dx: 50, dy: 80, rotate: 45, scale: 64 }),
+        quote({
+          type: "quote",
+          id: 1,
+          dx: -50,
+          dy: -30,
+          rotate: 90,
+          scale: 64,
+        }),
+      ]
         .map((e) => e.encode())
         .map(bytes),
       { from: alice }

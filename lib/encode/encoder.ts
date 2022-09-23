@@ -17,7 +17,7 @@ export type Encoder = {
   encode: () => number[];
 };
 
-export const quote = ({ id }: Quote): Encoder => {
+export const quote = ({ id, dx, dy, rotate, scale }: Quote): Encoder => {
   const encode = () => {
     let temp = id;
     const revAddr: number[] = [];
@@ -25,7 +25,15 @@ export const quote = ({ id }: Quote): Encoder => {
       revAddr.push(temp % 256);
       temp = Math.floor(temp / 256);
     });
-    return [0x00, ...revAddr.reverse()];
+    const ds = [dx, dy].map((d) => Math.floor((d + 250) / 2));
+    const deg = rotate % 360;
+    return [
+      0x00,
+      ...revAddr.reverse(),
+      ...ds,
+      deg % 256,
+      scale + 256 * Math.floor(deg / 256),
+    ];
   };
   return { encode };
 };

@@ -6,6 +6,10 @@ export type ElementType = Element["type"];
 export type Quote = {
   type: "quote";
   id: number; // is bigint better?;
+  rotate: number;
+  dx: number;
+  dy: number;
+  scale: number;
 };
 
 export type Rect = {
