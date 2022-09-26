@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "./Lib.sol";
 import "./Decoder.sol";
 import "./Rect.sol";
@@ -9,6 +10,7 @@ import "./Ellipse.sol";
 
 contract Willow {
   using Strings for int16;
+  using Strings for uint8;
   using Strings for uint16;
 
   Decoder[] decoders;
@@ -110,19 +112,27 @@ contract Willow {
       id <<= 8;
       id += uint8(d[i+1]);
     }
+    uint16 rotate = uint16(uint8(d[addr_length+3])) * 3;
+    uint16 size = uint16(uint8(d[addr_length+4])) * 2;
     return (
       abi.encodePacked(
-        '<g transform="translate(125,125) translate(',
-        Lib.intToString(b2i(d[addr_length+1]) * 2 - 250),
+        '<image href="data:image/svg+xml;base64,',
+        Base64.encode(bytes(draw(id))),
+        '" x="-',
+        (size / 2).toString(),
+        '" y="-',
+        (size / 2).toString(),
+        '" width="',
+        size.toString(),
+        '" height="',
+        size.toString(),
+        '" transform="translate(',
+        uint8(d[addr_length+1]).toString(),
         ',',
-        Lib.intToString(b2i(d[addr_length+2]) * 2 - 250),
+        uint8(d[addr_length+2]).toString(),
         ') rotate(',
-        (uint16(uint8(d[addr_length+3])) + (uint16(uint8(d[addr_length+4])) / 128) * 256).toString(),
-        ') scale(',
-        Lib.scaleString(uint8(d[addr_length+4]) % 128),
-        ') translate(-125,-125)">',
-        elements(id),
-        '</g>'
+        rotate.toString(),
+        ')" />'
       ),
       true
     );

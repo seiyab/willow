@@ -4,6 +4,7 @@ import { web3, willow } from "lib/web3";
 
 const Submit: React.FC = () => {
   const elements = useSelector(({ state }) => state.elements);
+  const clearElements = useSelector(({ actions }) => actions.clearElements);
   return (
     <button
       type="button"
@@ -14,6 +15,7 @@ const Submit: React.FC = () => {
           elements.map(({ value }) => encode(value)),
           { from: accounts[0] }
         );
+        clearElements();
       }}
     >
       Submit

@@ -1,13 +1,12 @@
 import produce from "immer";
-import { Element, ElementType, Rect } from "lib/element";
-import { Color, rgba } from "lib/element/color";
-import { uint8 } from "lib/util";
-import React, { PropsWithoutRef, SetStateAction } from "react";
+import { Element, ElementType } from "lib/element";
+import React, { SetStateAction } from "react";
 import { createContext, useContextSelector } from "use-context-selector";
 
 export type State = {
   elements: Entity<Element>[];
   tool: Tool;
+  selectedToken: number | null;
 };
 
 export type Entity<T> = {
@@ -42,6 +41,12 @@ export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
       addElement: mutate((draft, elem: Element) => {
         draft.elements.push(entity(elem));
       }),
+      clearElements: mutate((draft) => {
+        draft.elements = [];
+      }),
+      setSelectedToken: mutate((draft, id: number) => {
+        draft.selectedToken = id;
+      }),
     };
   }, [dispatch]);
 
@@ -58,6 +63,7 @@ export const withState = <T,>(Component: React.ComponentType<T>) => {
     const [state, setState] = React.useState<State>({
       elements: [],
       tool: "cursor",
+      selectedToken: null,
     });
     const actions = useActions(setState);
     return (

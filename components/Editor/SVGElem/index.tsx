@@ -1,11 +1,16 @@
-import { Element } from "lib/element";
+import Loading from "components/Loading";
+import { Element, Quote } from "lib/element";
 import { Color } from "lib/element/color";
+import { useDraw } from "lib/web3";
 
 type Props = {
   value: Element;
 };
 
 const SVGElem: React.FC<Props> = ({ value: elem }) => {
+  if (elem.type === "quote") {
+    return <Quote quote={elem} />;
+  }
   if (elem.type === "rect") {
     return (
       <rect
@@ -28,6 +33,27 @@ const SVGElem: React.FC<Props> = ({ value: elem }) => {
       />
     );
   }
+  return null;
+};
+
+const Quote: React.FC<{ quote: Quote }> = ({
+  quote: { id, cx, cy, size, rotate },
+}) => {
+  const svg = useDraw(id);
+  if (svg.isSuccess)
+    return (
+      <image
+        href={`data:image/svg+xml;utf8,${svg.data}`}
+        x={`-${Math.floor(size.value() / 2)}`}
+        y={`-${Math.floor(size.value() / 2)}`}
+        width={size.value()}
+        height={size.value()}
+        transform={`
+          translate(${cx}, ${cy})
+          rotate(${rotate.value()})
+        `}
+      />
+    );
   return null;
 };
 
