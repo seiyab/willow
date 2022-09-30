@@ -1,6 +1,4 @@
-import { do_ } from "@seiyab/do-expr";
-import { usePromise } from "lib/swr";
-import { willow } from "lib/web3";
+import { useDraw } from "lib/web3";
 import Image from "next/image";
 import * as React from "react";
 
@@ -10,10 +8,7 @@ type Props = {
 };
 
 const Viewer: React.FC<Props> = ({ id, size = 250 }) => {
-  const p = usePromise(`willow.draw(${id})`, async () => {
-    const wi = await willow();
-    return await wi.draw(id);
-  });
+  const p = useDraw(id);
   if (p.isSuccess)
     return (
       <Image

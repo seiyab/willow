@@ -5,10 +5,12 @@ import { Point } from "lib/util";
 import { localPosition } from "lib/react";
 import { boundary } from "./boundaryElement";
 import { Color } from "lib/element/color";
+import { do_ } from "@seiyab/do-expr";
 
 const Canvas: React.FC = () => {
   const elements = useSelector(({ state }) => state.elements);
   const tool = useSelector(({ state }) => state.tool);
+  const selectedToken = useSelector(({ state }) => state.selectedToken);
   const [startDrag, setStartDrag] = React.useState<Point | null>(null);
   const [currentDrag, setCurrentDrag] = React.useState<Point | null>(null);
   const [color, setColor] = React.useState<Color>(Color.random());
@@ -23,10 +25,14 @@ const Canvas: React.FC = () => {
   const handleMouseUp: React.EventHandler<React.MouseEvent> = (e) => {
     setCurrentDrag(null);
     if (startDrag === null) return;
-    if (tool !== "rect" && tool !== "ellipse") return;
-    addElement(boundary[tool](startDrag, localPosition(e), color));
     setStartDrag(null);
     setColor(Color.random());
+    if (tool === "quote" && selectedToken !== null) {
+      addElement(boundary.quote(startDrag, localPosition(e), selectedToken));
+    }
+    if (tool === "rect" || tool === "ellipse") {
+      addElement(boundary[tool](startDrag, localPosition(e), color));
+    }
   };
   return (
     <svg
@@ -41,11 +47,21 @@ const Canvas: React.FC = () => {
       {elements.map(({ id, value }) => (
         <SVGElem key={id} value={value} />
       ))}
-      {startDrag !== null &&
-        currentDrag !== null &&
-        (tool === "rect" || tool === "ellipse") && (
-          <SVGElem value={boundary[tool](startDrag, currentDrag, color)} />
-        )}
+      {do_(() => {
+        if (startDrag === null) return null;
+        if (currentDrag === null) return null;
+        if (tool === "quote" && selectedToken !== null)
+          return (
+            <SVGElem
+              value={boundary.quote(startDrag, currentDrag, selectedToken)}
+            />
+          );
+        if (tool === "rect" || tool === "ellipse")
+          return (
+            <SVGElem value={boundary[tool](startDrag, currentDrag, color)} />
+          );
+        return null;
+      })}
     </svg>
   );
 };

@@ -4,6 +4,7 @@ import Canvas from "./Canvas";
 import Toolbox from "./Toolbox/indx";
 import Submit from "./Submit";
 import Frame from "components/Frame";
+import QuoteSelector from "./QuoteSelector";
 
 const Editor: React.FC = () => {
   return (
@@ -23,6 +24,9 @@ const Editor: React.FC = () => {
           <Toolbox />
         </div>
       </div>
+      <div className="quote-selector-container">
+        <QuoteSelector />
+      </div>
       <style jsx>
         {`
           .center {
@@ -30,6 +34,10 @@ const Editor: React.FC = () => {
           }
 
           .toolbox-container {
+            margin-top: 10px;
+          }
+
+          .quote-selector-container {
             margin-top: 10px;
           }
         `}

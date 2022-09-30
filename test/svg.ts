@@ -3,6 +3,7 @@ import { WillowInstance } from "types/truffle-contracts";
 import { bytes } from "lib/encode/bytes";
 import { ellipse, quote, rect } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
+import { stepUint } from "lib/element/values";
 
 const Willow = artifacts.require("Willow");
 
@@ -98,14 +99,21 @@ contract("assert svg", ([alice, bob]) => {
 
     await contractInstance.create(
       [
-        quote({ type: "quote", id: 0, dx: 50, dy: 80, rotate: 45, scale: 64 }),
+        quote({
+          type: "quote",
+          id: 0,
+          cx: 175,
+          cy: 205,
+          rotate: stepUint(45, 3),
+          size: stepUint(124, 2),
+        }),
         quote({
           type: "quote",
           id: 1,
-          dx: -50,
-          dy: -30,
-          rotate: 90,
-          scale: 64,
+          cx: 75,
+          cy: 95,
+          rotate: stepUint(90, 3),
+          size: stepUint(124, 2),
         }),
       ]
         .map((e) => e.encode())
