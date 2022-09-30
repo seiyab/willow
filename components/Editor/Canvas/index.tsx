@@ -1,11 +1,14 @@
 import * as React from "react";
+
+import { do_ } from "@seiyab/do-expr";
+
 import { useSelector } from "components/Editor/state";
 import SVGElem from "components/Editor/SVGElem";
+import Selectable from "components/Editor/Selectable";
 import { Point } from "lib/util";
 import { localPosition } from "lib/react";
 import { boundary } from "./boundaryElement";
 import { Color } from "lib/element/color";
-import { do_ } from "@seiyab/do-expr";
 
 const Canvas: React.FC = () => {
   const elements = useSelector(({ state }) => state.elements);
@@ -45,7 +48,9 @@ const Canvas: React.FC = () => {
       data-testid="canvas"
     >
       {elements.map(({ id, value }) => (
-        <SVGElem key={id} value={value} />
+        <Selectable key={id} id={id}>
+          <SVGElem value={value} />
+        </Selectable>
       ))}
       {do_(() => {
         if (startDrag === null) return null;
@@ -62,6 +67,11 @@ const Canvas: React.FC = () => {
           );
         return null;
       })}
+      <style jsx>{`
+        svg:hover {
+          ${tool !== "cursor" ? "cursor: crosshair;" : ""}
+        }
+      `}</style>
     </svg>
   );
 };

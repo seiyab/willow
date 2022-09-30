@@ -6,6 +6,7 @@ import { createContext, useContextSelector } from "use-context-selector";
 export type State = {
   elements: Entity<Element>[];
   tool: Tool;
+  selectedElement: string | null;
   selectedToken: number | null;
 };
 
@@ -37,9 +38,15 @@ export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
     return {
       setTool: mutate((draft, tool: Tool) => {
         draft.tool = tool;
+        if (tool !== "cursor") {
+          draft.selectedElement = null;
+        }
       }),
       addElement: mutate((draft, elem: Element) => {
         draft.elements.push(entity(elem));
+      }),
+      selectElement: mutate((draft, id: string | null) => {
+        draft.selectedElement = id;
       }),
       clearElements: mutate((draft) => {
         draft.elements = [];
@@ -63,6 +70,7 @@ export const withState = <T,>(Component: React.ComponentType<T>) => {
     const [state, setState] = React.useState<State>({
       elements: [],
       tool: "cursor",
+      selectedElement: null,
       selectedToken: null,
     });
     const actions = useActions(setState);
