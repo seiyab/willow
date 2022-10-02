@@ -11,10 +11,10 @@ describe("<Editor />", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "rect" }));
 
-    assert.equal(canvas.childElementCount, 0);
+    assert.equal(canvas.querySelectorAll("rect").length, 0);
 
     await drag(canvas).start({ x: 20, y: 40 }).end({ x: 100, y: 150 });
 
-    assert.equal(canvas.childElementCount, 1);
+    assert.equal(canvas.querySelectorAll("rect").length, 1);
   });
 });

@@ -6,6 +6,27 @@ const Toolbox: React.FC = () => {
   return (
     <div className="flex-center container">
       <button
+        className="cursor"
+        onClick={() => setTool("cursor")}
+        aria-label="cursor"
+      >
+        <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+          <g fill="#555" transform="rotate(-20, 15, 15)">
+            <polygon
+              points={`
+                15, 5
+                10, 20
+                13, 20
+                13, 25
+                17, 25
+                17, 20
+                20,20
+            `}
+            />
+          </g>
+        </svg>
+      </button>
+      <button
         className="quote"
         onClick={() => setTool("quote")}
         aria-label="quote"

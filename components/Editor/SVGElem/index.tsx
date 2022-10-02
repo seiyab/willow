@@ -1,4 +1,3 @@
-import Loading from "components/Loading";
 import { Element, Quote } from "lib/element";
 import { Color } from "lib/element/color";
 import { useDraw } from "lib/web3";
