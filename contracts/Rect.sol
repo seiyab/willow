@@ -7,7 +7,7 @@ import "./Lib.sol";
 
 contract Rect is Decoder {
   using Strings for uint8;
-  
+
   function valid(bytes memory d) public pure override returns (bool) {
     if (d[0] != 0x01) {
       return false;

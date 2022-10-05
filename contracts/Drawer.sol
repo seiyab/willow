@@ -8,32 +8,31 @@ import "./Decoder.sol";
 import "./Repository.sol";
 
 contract Drawer {
-  using Strings for int16;
   using Strings for uint8;
   using Strings for uint16;
 
-  Decoder[] decoders;
-  Repository repository;
+  Decoder[] private decoders;
+  Repository private repository;
 
-  constructor(Repository r) {
-    repository = r;
+  constructor(address r) {
+    repository = Repository(r);
   }
 
-  function addDecoder(Decoder d) external {
-    decoders.push(d);
+  function addDecoder(address d) external {
+    decoders.push(Decoder(d));
   }
 
-  function draw(uint256 paintingID) public view returns (string memory) {
+  function draw(uint256 tokenID) public view returns (string memory) {
     bytes memory pack = abi.encodePacked(
       '<svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">',
-      Lib.concat(elements(paintingID)),
+      Lib.concat(elements(tokenID)),
       '</svg>'
     );
     return string(pack);
   }
 
   function validate(bytes[] calldata data) view external {
-    require(data.length > 0);
+    require(data.length > 0, 'data.length should not be 0');
     for (uint i=0; i < data.length; i++) {
       if (validQuote(data[i])) {
         continue;
@@ -46,7 +45,7 @@ contract Drawer {
           break;
         }
       }
-      require(valid);
+      require(valid, 'invalid data');
     }
   }
 
@@ -98,8 +97,8 @@ contract Drawer {
     );
   }
   
-  function elements(uint256 paintingID) internal view returns (bytes[] memory) {
-    Repository.Painting memory p = repository.get(paintingID);
+  function elements(uint256 tokenID) internal view returns (bytes[] memory) {
+    Repository.Painting memory p = repository.get(tokenID);
     bytes[] memory result = new bytes[](p.data.length);
     for (uint i = 0; i < p.data.length; i++) {
       bytes memory item;

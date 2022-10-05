@@ -9,9 +9,12 @@ const Willow = artifacts.require("Willow");
 
 contract("assert svg", ([alice, bob]) => {
   let contractInstance: WillowInstance;
+  const latestID = async () =>
+    (await (await contractInstance.length()).toNumber()) - 1;
   beforeEach(async () => {
-    contractInstance = await Willow.new();
+    contractInstance = await Willow.deployed();
   });
+
   it("rect", async () => {
     await contractInstance.create(
       [
@@ -20,7 +23,7 @@ contract("assert svg", ([alice, bob]) => {
       ],
       { from: alice }
     );
-    const svg = await contractInstance.draw(0);
+    const svg = await contractInstance.draw(await latestID());
 
     return assert.equal(
       svg,
@@ -54,7 +57,7 @@ contract("assert svg", ([alice, bob]) => {
         .map(bytes)
     );
 
-    const svg = await contractInstance.draw(0);
+    const svg = await contractInstance.draw(await latestID());
 
     return assert.equal(
       svg,
@@ -79,6 +82,7 @@ contract("assert svg", ([alice, bob]) => {
         .map(bytes),
       { from: alice }
     );
+    const rectID = await latestID();
 
     await contractInstance.create(
       [
@@ -96,12 +100,13 @@ contract("assert svg", ([alice, bob]) => {
         .map(bytes),
       { from: bob }
     );
+    const ellipseID = await latestID();
 
     await contractInstance.create(
       [
         quote({
           type: "quote",
-          id: 0,
+          id: rectID,
           cx: 175,
           cy: 205,
           rotate: stepUint(45, 3),
@@ -109,7 +114,7 @@ contract("assert svg", ([alice, bob]) => {
         }),
         quote({
           type: "quote",
-          id: 1,
+          id: ellipseID,
           cx: 75,
           cy: 95,
           rotate: stepUint(90, 3),
@@ -121,7 +126,7 @@ contract("assert svg", ([alice, bob]) => {
       { from: alice }
     );
 
-    const svg = await contractInstance.draw(2);
+    const svg = await contractInstance.draw(await latestID());
 
     return assert.equal(
       svg,

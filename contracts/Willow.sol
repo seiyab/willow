@@ -2,35 +2,50 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./Lib.sol";
 import "./Repository.sol";
 import "./Drawer.sol";
-import "./Rect.sol";
-import "./Ellipse.sol";
 
-contract Willow {
-  Repository repository;
-  Drawer drawer;
+contract Willow is ERC721Enumerable {
+  Repository private repository;
+  Drawer private drawer;
 
-  constructor() {
-    repository = new Repository();
-    drawer = new Drawer(repository);
-
-    drawer.addDecoder(new Rect());
-    drawer.addDecoder(new Ellipse());
+  constructor(address r, address d)
+  ERC721('Willow - on-chain svg image storage', 'WILLOW')
+  {
+    repository = Repository(r);
+    drawer = Drawer(d);
   }
 
   function create(bytes[] calldata data) external returns (uint256) {
     drawer.validate(data);
-    return repository.append(data);
+    uint256 id = repository.append(data);
+    _safeMint(msg.sender, id);
+    return id;
   }
 
-  function draw(uint256 paintingID) public view returns (string memory) {
-    return drawer.draw(paintingID);
+  function draw(uint256 tokenID) public view returns (string memory) {
+    return drawer.draw(tokenID);
   }
-
 
   function length() public view returns (uint256) {
     return repository.length();
+  }
+
+  function tokenURI(uint256 tokenID) public view override returns (string memory) {
+    require(_exists(tokenID), 'token doesn\'t exist');
+    string memory name = 'No Title';
+    string memory svg = drawer.draw(tokenID);
+    return string(abi.encodePacked(
+      'data:application/json;base64,',
+      Base64.encode(bytes(abi.encodePacked(
+        '{"name":"',
+        name,
+        '","description":"On-chain SVG image","image":"data:image/svg+xml;base64,',
+        Base64.encode(bytes(svg)),
+        '"}'
+      )))
+    ));
   }
 }
