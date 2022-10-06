@@ -2,18 +2,16 @@
 pragma solidity ^0.8.0;
 
 contract Repository {
-  Painting[] paintings;
+  Painting[] private paintings;
 
   struct Painting {
-    address owner;
     address creator;
     bytes[] data;
   }
 
   function append(bytes[] calldata data) external returns (uint256) {
-    Painting storage p = paintings.push();
     uint256 id = paintings.length;
-    p.owner = msg.sender;
+    Painting storage p = paintings.push();
     p.creator = msg.sender;
     for (uint i = 0; i < data.length; ++i) {
       p.data.push(data[i]);
