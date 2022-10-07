@@ -9,12 +9,6 @@ library Lib {
   using Strings for uint32;
   using Strings for uint;
 
-  struct Painting {
-    address owner;
-    address creator;
-    bytes[] data;
-  }
-
   function colorString(bytes1 x, bytes1 y) public pure returns (string memory) {
     uint32 r = (uint8(x) >> 4) * 0x11;
     uint32 g = (uint8(x) % 0x10) * 0x11;

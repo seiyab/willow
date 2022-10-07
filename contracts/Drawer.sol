@@ -19,6 +19,7 @@ contract Drawer {
   }
 
   function addDecoder(address d) external {
+    require(msg.sender == repository.getAdmin(), 'only admin can addDecoder');
     decoders.push(Decoder(d));
   }
 
@@ -98,20 +99,20 @@ contract Drawer {
   }
   
   function elements(uint256 tokenID) internal view returns (bytes[] memory) {
-    Repository.Painting memory p = repository.get(tokenID);
-    bytes[] memory result = new bytes[](p.data.length);
-    for (uint i = 0; i < p.data.length; i++) {
+    bytes[] memory data = repository.get(tokenID);
+    bytes[] memory result = new bytes[](data.length);
+    for (uint i = 0; i < data.length; i++) {
       bytes memory item;
       bool ok;
 
-      (item, ok) = quote(p.data[i]);
+      (item, ok) = quote(data[i]);
       if (ok) {
         result[i] = item;
         continue;
       }
 
       for (uint j = 0; j < decoders.length; j++) {
-        (item, ok) = decoders[j].decode(p.data[i]);
+        (item, ok) = decoders[j].decode(data[i]);
         if (ok) {
           break;
         }
