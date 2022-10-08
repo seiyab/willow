@@ -3,7 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./Lib.sol";
+import "./Admin.sol";
 import "./Repository.sol";
 import "./Drawer.sol";
 
@@ -14,7 +16,9 @@ contract Willow is ERC721Enumerable {
   constructor(address r, address d)
   ERC721('Willow - on-chain svg image storage', 'WILLOW')
   {
+    Admin a = new Token0Admin(address(this));
     repository = Repository(r);
+    repository.setAdmin(address(a));
     drawer = Drawer(d);
   }
 
@@ -47,5 +51,17 @@ contract Willow is ERC721Enumerable {
         '"}'
       )))
     ));
+  }
+}
+
+contract Token0Admin is Admin {
+  IERC721 erc721;
+
+  constructor(address e) {
+    erc721 = IERC721(e);
+  }
+
+  function getAdmin() external override view returns (address) {
+    return erc721.ownerOf(0);
   }
 }

@@ -15,6 +15,14 @@ contract("assert svg", ([alice, bob]) => {
     contractInstance = await Willow.deployed();
   });
 
+  it("admin token", async () => {
+    const svg = await contractInstance.draw(0);
+    return assert.equal(
+      svg,
+      await fs.readFile(`${__dirname}/svgs/admin.svg`, { encoding: "utf-8" })
+    );
+  });
+
   it("rect", async () => {
     await contractInstance.create(
       [

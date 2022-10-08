@@ -5,7 +5,9 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "./Lib.sol";
 import "./Decoder.sol";
+import "./Rect.sol";
 import "./Repository.sol";
+import "./Ellipse.sol";
 
 contract Drawer {
   using Strings for uint8;
@@ -16,6 +18,8 @@ contract Drawer {
 
   constructor(address r) {
     repository = Repository(r);
+    decoders.push(new Rect());
+    decoders.push(new Ellipse());
   }
 
   function addDecoder(address d) external {

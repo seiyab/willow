@@ -1,18 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./Admin.sol";
+
 contract Repository {
-  address admin;
+  Admin private admin;
   bytes[][] private data;
   uint private max;
 
   constructor() {
-    admin = msg.sender;
     max = 100;
   }
 
+  function setAdmin(address a) public {
+    require(address(admin) == address(0));
+    admin = Admin(a);
+  }
+
   function setMax(uint newMax) public {
-    require(isAdmin(), 'only admin can setMax');
+    require(msg.sender == getAdmin(), 'only admin can setMax');
     require(newMax < 0xffffffff, 'too large newMax');
     max = newMax;
   }
@@ -35,16 +41,7 @@ contract Repository {
     return data.length;
   }
 
-  function isAdmin() public view returns (bool) {
-    return msg.sender == admin;
-  }
-
   function getAdmin() public view returns (address) {
-    return admin;
-  }
-
-  function transferAdmin(address to) public {
-    require(isAdmin(), 'only admin can transferAdmin');
-    admin = to;
+    return admin.getAdmin();
   }
 }
