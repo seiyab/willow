@@ -55,7 +55,7 @@ contract Willow is ERC721Enumerable {
 }
 
 contract Token0Admin is Admin {
-  IERC721 erc721;
+  IERC721 private erc721;
 
   constructor(address e) {
     erc721 = IERC721(e);

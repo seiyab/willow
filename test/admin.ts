@@ -8,6 +8,7 @@ const Willow = artifacts.require("Willow");
 const Drawer = artifacts.require("Drawer");
 const Repository = artifacts.require("Repository");
 const Rect = artifacts.require("Rect");
+const Token0Admin = artifacts.require("Token0Admin");
 
 contract("admin", ([alice, bob, clara]) => {
   let willow: WillowInstance;
@@ -63,20 +64,37 @@ contract("admin", ([alice, bob, clara]) => {
     const repository = await Repository.deployed();
     await expectAsyncThrow(
       () => willow.transferFrom(alice, bob, 0, { from: bob }),
-      "transferAdmin from bob should fail"
+      "transfer admin token from bob should fail"
     );
     await expectAsyncThrow(
       () => willow.transferFrom(alice, clara, 0, { from: clara }),
-      "transferAdmin from clara should fail"
+      "transfer admin token from clara should fail"
     );
     await willow.transferFrom(alice, bob, 0, { from: alice });
     await expectAsyncThrow(
       () => willow.transferFrom(bob, clara, 0, { from: clara }),
-      "transferAdmin from clara should fail"
+      "transfer admin token from clara should fail"
     );
     await repository.setMax(1_000, { from: bob });
     await willow.transferFrom(bob, clara, 0, { from: bob });
     await willow.transferFrom(clara, alice, 0, { from: clara });
+  });
+
+  it("should't accept setAdmin", async () => {
+    const repository = await Repository.deployed();
+    const t = await (await Token0Admin.new(willow.address)).address;
+    await expectAsyncThrow(
+      () => repository.setAdmin(t, { from: alice }),
+      "setAdmin should fail"
+    );
+    await expectAsyncThrow(
+      () => repository.setAdmin(t, { from: bob }),
+      "setAdmin should fail"
+    );
+    await expectAsyncThrow(
+      () => repository.setAdmin(t, { from: clara }),
+      "setAdmin should fail"
+    );
   });
 });
 
