@@ -1,5 +1,6 @@
 import { do_ } from "@seiyab/do-expr";
 import { GraphicalElement, Ellipse, Polygon, Quote, Rect } from "lib/element";
+import { uint8, Uint8 } from "lib/element/values";
 import { range } from "lib/util";
 import { bytes } from "./bytes";
 import { encodeColor } from "./color";
@@ -15,7 +16,7 @@ export const encode = <E extends GraphicalElement>(e: E): string => {
   return bytes(nums);
 };
 
-type Encoder<T> = (t: T) => number[];
+type Encoder<T> = (t: T) => Uint8[];
 
 const quote: Encoder<Quote> = ({ id, cx, cy, rotate, size }) => {
   let temp = id;
@@ -24,19 +25,26 @@ const quote: Encoder<Quote> = ({ id, cx, cy, rotate, size }) => {
     revAddr.push(temp % 256);
     temp = Math.floor(temp / 256);
   });
-  return [0x00, ...revAddr.reverse(), cx, cy, rotate.shrunk(), size.shrunk()];
+  return [
+    0x00,
+    ...revAddr.reverse(),
+    cx,
+    cy,
+    rotate.shrunk(),
+    size.shrunk(),
+  ].map(uint8);
 };
 
 const rect: Encoder<Rect> = ({ x, y, width, height, fill, stroke }) => {
   const [f, s] = [encodeColor(fill), encodeColor(stroke)];
-  return [0x01, x, y, width, height, ...f, ...s];
+  return [uint8(0x01), x, y, width, height, ...f, ...s];
 };
 
 const ellipse: Encoder<Ellipse> = ({ cx, cy, rx, ry, fill, stroke }) => {
   const [f, s] = [encodeColor(fill), encodeColor(stroke)];
-  return [0x02, cx, cy, rx, ry, ...f, ...s];
+  return [uint8(0x02), cx, cy, rx, ry, ...f, ...s];
 };
 
 const polygon: Encoder<Polygon> = ({ points, fill }) => {
-  return [0x03, ...encodeColor(fill), ...points.flat()];
+  return [uint8(0x03), ...encodeColor(fill), ...points.flat()];
 };

@@ -3,7 +3,7 @@ import { WillowInstance } from "types/truffle-contracts";
 import { bytes } from "lib/encode/bytes";
 import { encode } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
-import { stepUint } from "lib/element/values";
+import { stepUint, uint8 } from "lib/element/values";
 import { Ellipse, Polygon, Quote, Rect } from "lib/element";
 
 const Willow = artifacts.require("Willow");
@@ -44,19 +44,19 @@ contract("assert svg", ([alice, bob]) => {
     await contractInstance.create([
       encode<Ellipse>({
         type: "ellipse",
-        cx: 100,
-        cy: 50,
-        rx: 60,
-        ry: 30,
+        cx: uint8(100),
+        cy: uint8(50),
+        rx: uint8(60),
+        ry: uint8(30),
         fill: rgba(1, 2, 3, 4),
         stroke: rgba(5, 6, 7, 8),
       }),
       encode<Ellipse>({
         type: "ellipse",
-        cx: 200,
-        cy: 150,
-        rx: 40,
-        ry: 80,
+        cx: uint8(200),
+        cy: uint8(150),
+        rx: uint8(40),
+        ry: uint8(80),
         fill: rgba(8, 7, 6, 5),
         stroke: rgba(4, 3, 2, 1),
       }),
@@ -75,10 +75,10 @@ contract("assert svg", ([alice, bob]) => {
       [
         encode<Rect>({
           type: "rect",
-          x: 50,
-          y: 50,
-          width: 150,
-          height: 150,
+          x: uint8(50),
+          y: uint8(50),
+          width: uint8(150),
+          height: uint8(150),
           fill: rgba(15, 0, 0, 15),
           stroke: rgba(0, 0, 0, 0),
         }),
@@ -91,10 +91,10 @@ contract("assert svg", ([alice, bob]) => {
       [
         encode<Ellipse>({
           type: "ellipse",
-          cx: 125,
-          cy: 125,
-          rx: 80,
-          ry: 100,
+          cx: uint8(125),
+          cy: uint8(125),
+          rx: uint8(80),
+          ry: uint8(100),
           fill: rgba(0, 0, 15, 7),
           stroke: rgba(0, 0, 0, 0),
         }),
@@ -108,16 +108,16 @@ contract("assert svg", ([alice, bob]) => {
         encode<Quote>({
           type: "quote",
           id: rectID,
-          cx: 175,
-          cy: 205,
+          cx: uint8(175),
+          cy: uint8(205),
           rotate: stepUint(45, 3),
           size: stepUint(124, 2),
         }),
         encode<Quote>({
           type: "quote",
           id: ellipseID,
-          cx: 75,
-          cy: 95,
+          cx: uint8(75),
+          cy: uint8(95),
           rotate: stepUint(90, 3),
           size: stepUint(124, 2),
         }),
@@ -140,10 +140,10 @@ contract("assert svg", ([alice, bob]) => {
           type: "polygon",
           fill: rgba(0x2, 0xf, 0xc, 0xf),
           points: [
-            [0, 250],
-            [125, 60],
-            [125, 190],
-            [250, 0],
+            [uint8(0), uint8(250)],
+            [uint8(125), uint8(60)],
+            [uint8(125), uint8(190)],
+            [uint8(250), uint8(0)],
           ],
         }),
       ],

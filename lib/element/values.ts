@@ -1,7 +1,5 @@
-import { uint8 } from "lib/util";
-
 export type StepUint<Step extends number> = {
-  shrunk: () => number;
+  shrunk: () => Uint8;
   value: () => number;
   __phantom_step: Step;
 };
@@ -18,3 +16,11 @@ export const stepUint = <Step extends number>(
     __phantom_step: step,
   };
 };
+
+const sUint8 = Symbol();
+export type Uint8 = number & {
+  [sUint8]: never;
+};
+
+export const uint8 = (x: number) =>
+  Math.floor(Math.max(0, Math.min(x, 255))) as Uint8;
