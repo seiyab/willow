@@ -1,10 +1,10 @@
 import { do_ } from "@seiyab/do-expr";
-import { Element, Ellipse, Polygon, Quote, Rect } from "lib/element";
+import { GraphicalElement, Ellipse, Polygon, Quote, Rect } from "lib/element";
 import { range } from "lib/util";
 import { bytes } from "./bytes";
 import { encodeColor } from "./color";
 
-export const encode = <E extends Element>(e: E): string => {
+export const encode = <E extends GraphicalElement>(e: E): string => {
   const nums = do_(() => {
     if (e.type === "rect") return rect(e);
     if (e.type === "ellipse") return ellipse(e);

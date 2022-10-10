@@ -1,8 +1,8 @@
 import { Color } from "./color";
 import { StepUint } from "./values";
 
-export type Element = Quote | Rect | Ellipse | Polygon;
-export type ElementType = Element["type"];
+export type GraphicalElement = Quote | Rect | Ellipse | Polygon;
+export type GraphicalElementType = GraphicalElement["type"];
 
 export type Quote = {
   type: "quote";

@@ -1,10 +1,10 @@
 import produce from "immer";
-import { Element, ElementType } from "lib/element";
+import { GraphicalElement, GraphicalElementType } from "lib/element";
 import React, { SetStateAction } from "react";
 import { createContext, useContextSelector } from "use-context-selector";
 
 export type State = {
-  elements: Entity<Element>[];
+  elements: Entity<GraphicalElement>[];
   tool: Tool;
   selectedElement: string | null;
   selectedToken: number | null;
@@ -27,7 +27,7 @@ const createID = (): (() => string) => {
 
 const id = createID();
 
-export type Tool = ElementType | "cursor";
+export type Tool = GraphicalElementType | "cursor";
 
 export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
   React.useMemo(() => {
@@ -42,7 +42,7 @@ export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
           draft.selectedElement = null;
         }
       }),
-      addElement: mutate((draft, elem: Element) => {
+      addElement: mutate((draft, elem: GraphicalElement) => {
         draft.elements.push(entity(elem));
       }),
       selectElement: mutate((draft, id: string | null) => {
