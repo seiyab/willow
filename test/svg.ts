@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import { WillowInstance } from "types/truffle-contracts";
 import { bytes } from "lib/encode/bytes";
-import { ellipse, quote, rect } from "lib/encode/encoder";
+import { ellipse, encode, quote, rect } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
 import { stepUint } from "lib/element/values";
 
@@ -139,6 +139,30 @@ contract("assert svg", ([alice, bob]) => {
     return assert.equal(
       svg,
       await fs.readFile(`${__dirname}/svgs/quote.svg`, { encoding: "utf-8" })
+    );
+  });
+
+  it("polygon", async () => {
+    await contractInstance.create(
+      [
+        encode({
+          type: "polygon",
+          fill: rgba(0x2, 0xf, 0xc, 0xf),
+          points: [
+            [0, 250],
+            [125, 60],
+            [125, 190],
+            [250, 0],
+          ],
+        }),
+      ],
+      { from: alice }
+    );
+    const svg = await contractInstance.draw(await latestID());
+
+    return assert.equal(
+      svg,
+      await fs.readFile(`${__dirname}/svgs/polygon.svg`, { encoding: "utf-8" })
     );
   });
 });

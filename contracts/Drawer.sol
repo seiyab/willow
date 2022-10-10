@@ -8,6 +8,7 @@ import "./Decoder.sol";
 import "./Rect.sol";
 import "./Repository.sol";
 import "./Ellipse.sol";
+import "./Polygon.sol";
 
 contract Drawer {
   using Strings for uint8;
@@ -20,6 +21,7 @@ contract Drawer {
     repository = Repository(r);
     decoders.push(new Rect());
     decoders.push(new Ellipse());
+    decoders.push(new Polygon());
   }
 
   function addDecoder(address d) external {
