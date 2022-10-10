@@ -1,6 +1,7 @@
+import { Rect } from "lib/element";
 import { rgba } from "lib/element/color";
-import { bytes } from "lib/encode/bytes";
-import { rect } from "lib/encode/encoder";
+import { uint8 } from "lib/element/values";
+import { encode } from "lib/encode/encoder";
 import { range } from "lib/util";
 import { WillowInstance } from "types/truffle-contracts";
 
@@ -99,18 +100,16 @@ contract("admin", ([alice, bob, clara]) => {
 });
 
 const payload = [
-  rect({
+  encode<Rect>({
     type: "rect",
-    x: 100,
-    y: 100,
-    width: 50,
-    height: 50,
+    x: uint8(100),
+    y: uint8(100),
+    width: uint8(50),
+    height: uint8(50),
     fill: rgba(15, 0, 0, 15),
     stroke: rgba(0, 0, 0, 0),
   }),
-]
-  .map((e) => e.encode())
-  .map(bytes);
+];
 
 const expectAsyncThrow = async (p: () => Promise<unknown>, message: string) => {
   try {

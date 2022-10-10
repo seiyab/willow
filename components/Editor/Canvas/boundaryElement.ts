@@ -1,7 +1,7 @@
 import { Ellipse, Quote, Rect } from "lib/element";
 import { Color, rgba } from "lib/element/color";
-import { stepUint } from "lib/element/values";
-import { Point, uint8 } from "lib/util";
+import { stepUint, uint8 } from "lib/element/values";
+import { Point } from "lib/util";
 
 export const boundary = {
   quote(p1: Point, p2: Point, id: number): Quote {

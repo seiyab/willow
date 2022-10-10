@@ -1,9 +1,9 @@
-import { Element, Quote } from "lib/element";
+import { GraphicalElement, Quote } from "lib/element";
 import { Color } from "lib/element/color";
 import { useDraw } from "lib/web3";
 
 type Props = {
-  value: Element;
+  value: GraphicalElement;
 };
 
 const SVGElem: React.FC<Props> = ({ value: elem }) => {

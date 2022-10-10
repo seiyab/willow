@@ -1,8 +1,9 @@
 import { Color } from "lib/element/color";
-import { Encoder } from "lib/encode/encoder";
+import { uint8, Uint8 } from "lib/element/values";
 
-export const color = ({ r, g, b, a }: Color): Encoder => ({
-  encode: () => [pack(r, g), pack(b, a)],
-});
+export const encodeColor = ({ r, g, b, a }: Color): [Uint8, Uint8] => [
+  pack(r, g),
+  pack(b, a),
+];
 
-const pack = (a: number, b: number): number => (a * 16 + b) % 256;
+const pack = (a: number, b: number): Uint8 => uint8(a * 16 + b);
