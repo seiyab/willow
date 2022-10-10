@@ -2,63 +2,41 @@ import { do_ } from "@seiyab/do-expr";
 import { Element, Ellipse, Polygon, Quote, Rect } from "lib/element";
 import { range } from "lib/util";
 import { bytes } from "./bytes";
-import { color } from "./color";
+import { encodeColor } from "./color";
 
-export const encode = (e: Element): string => {
-  const encoder = do_(() => {
+export const encode = <E extends Element>(e: E): string => {
+  const nums = do_(() => {
     if (e.type === "rect") return rect(e);
     if (e.type === "ellipse") return ellipse(e);
     if (e.type === "quote") return quote(e);
     if (e.type === "polygon") return polygon(e);
     throw new Error();
   });
-  return bytes(encoder.encode());
+  return bytes(nums);
 };
 
-export type Encoder = {
-  encode: () => number[];
+type Encoder<T> = (t: T) => number[];
+
+const quote: Encoder<Quote> = ({ id, cx, cy, rotate, size }) => {
+  let temp = id;
+  const revAddr: number[] = [];
+  range(256 / 8).forEach(() => {
+    revAddr.push(temp % 256);
+    temp = Math.floor(temp / 256);
+  });
+  return [0x00, ...revAddr.reverse(), cx, cy, rotate.shrunk(), size.shrunk()];
 };
 
-export const quote = ({ id, cx, cy, rotate, size }: Quote): Encoder => {
-  const encode = () => {
-    let temp = id;
-    const revAddr: number[] = [];
-    range(256 / 8).forEach(() => {
-      revAddr.push(temp % 256);
-      temp = Math.floor(temp / 256);
-    });
-    return [0x00, ...revAddr.reverse(), cx, cy, rotate.shrunk(), size.shrunk()];
-  };
-  return { encode };
+const rect: Encoder<Rect> = ({ x, y, width, height, fill, stroke }) => {
+  const [f, s] = [encodeColor(fill), encodeColor(stroke)];
+  return [0x01, x, y, width, height, ...f, ...s];
 };
 
-export const rect = ({ x, y, width, height, fill, stroke }: Rect): Encoder => {
-  const [f, s] = [color(fill), color(stroke)];
-  const encode = () => [
-    0x01,
-    x,
-    y,
-    width,
-    height,
-    ...f.encode(),
-    ...s.encode(),
-  ];
-  return {
-    encode,
-  };
+const ellipse: Encoder<Ellipse> = ({ cx, cy, rx, ry, fill, stroke }) => {
+  const [f, s] = [encodeColor(fill), encodeColor(stroke)];
+  return [0x02, cx, cy, rx, ry, ...f, ...s];
 };
 
-export const ellipse = ({ cx, cy, rx, ry, fill, stroke }: Ellipse): Encoder => {
-  const [f, s] = [color(fill), color(stroke)];
-  const encode = () => [0x02, cx, cy, rx, ry, ...f.encode(), ...s.encode()];
-  return {
-    encode,
-  };
-};
-
-export const polygon = ({ points, fill }: Polygon): Encoder => {
-  const encode = () => [0x03, ...color(fill).encode(), ...points.flat()];
-  return {
-    encode,
-  };
+const polygon: Encoder<Polygon> = ({ points, fill }) => {
+  return [0x03, ...encodeColor(fill), ...points.flat()];
 };

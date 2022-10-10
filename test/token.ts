@@ -1,8 +1,9 @@
 import { WillowInstance } from "types/truffle-contracts";
-import { rect } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
 import { bytes } from "lib/encode/bytes";
 import { do_ } from "@seiyab/do-expr";
+import { encode } from "lib/encode/encoder";
+import { Rect } from "lib/element";
 
 const Willow = artifacts.require("Willow");
 
@@ -42,7 +43,7 @@ contract("token", ([alice, bob]) => {
 });
 
 const payload = [
-  rect({
+  encode<Rect>({
     type: "rect",
     x: 100,
     y: 100,
@@ -51,9 +52,7 @@ const payload = [
     fill: rgba(15, 0, 0, 15),
     stroke: rgba(0, 0, 0, 0),
   }),
-]
-  .map((e) => e.encode())
-  .map(bytes);
+];
 
 const fetch = (uri: string) => {
   const [_schema, afterSchema] = split(uri).on(":");
