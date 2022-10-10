@@ -1,7 +1,7 @@
 import { Color } from "./color";
 import { StepUint } from "./values";
 
-export type Element = Quote | Rect | Ellipse;
+export type Element = Quote | Rect | Ellipse | Polygon;
 export type ElementType = Element["type"];
 
 export type Quote = {
@@ -31,4 +31,10 @@ export type Ellipse = {
   ry: number;
   fill: Color;
   stroke: Color;
+};
+
+export type Polygon = {
+  type: "polygon";
+  points: [number, number][];
+  fill: Color;
 };

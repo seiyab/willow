@@ -1,6 +1,6 @@
 import { do_ } from "@seiyab/do-expr";
-import { Element, Ellipse, Quote, Rect } from "lib/element";
-import { range, uint8 } from "lib/util";
+import { Element, Ellipse, Polygon, Quote, Rect } from "lib/element";
+import { range } from "lib/util";
 import { bytes } from "./bytes";
 import { color } from "./color";
 
@@ -9,6 +9,7 @@ export const encode = (e: Element): string => {
     if (e.type === "rect") return rect(e);
     if (e.type === "ellipse") return ellipse(e);
     if (e.type === "quote") return quote(e);
+    if (e.type === "polygon") return polygon(e);
     throw new Error();
   });
   return bytes(encoder.encode());
@@ -50,6 +51,13 @@ export const rect = ({ x, y, width, height, fill, stroke }: Rect): Encoder => {
 export const ellipse = ({ cx, cy, rx, ry, fill, stroke }: Ellipse): Encoder => {
   const [f, s] = [color(fill), color(stroke)];
   const encode = () => [0x02, cx, cy, rx, ry, ...f.encode(), ...s.encode()];
+  return {
+    encode,
+  };
+};
+
+export const polygon = ({ points, fill }: Polygon): Encoder => {
+  const encode = () => [0x03, ...color(fill).encode(), ...points.flat()];
   return {
     encode,
   };
