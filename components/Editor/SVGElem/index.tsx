@@ -32,6 +32,14 @@ const SVGElem: React.FC<Props> = ({ value: elem }) => {
       />
     );
   }
+  if (elem.type === "polygon") {
+    return (
+      <polygon
+        points={elem.points.map((pair) => pair.join(",")).join(" ")}
+        fill={Color.stringify(elem.fill)}
+      />
+    );
+  }
   return null;
 };
 
