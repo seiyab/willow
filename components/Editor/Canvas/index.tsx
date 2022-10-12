@@ -9,24 +9,27 @@ import { Point } from "lib/util";
 import { localPosition } from "lib/react";
 import { boundary } from "./boundaryElement";
 import { Color } from "lib/element/color";
+import { usePoints } from "./usePoints";
+import { uint8 } from "lib/element/values";
 
 const Canvas: React.FC = () => {
   const elements = useSelector(({ state }) => state.elements);
   const tool = useSelector(({ state }) => state.tool);
   const selectedToken = useSelector(({ state }) => state.selectedToken);
   const [startDrag, setStartDrag] = React.useState<Point | null>(null);
-  const [currentDrag, setCurrentDrag] = React.useState<Point | null>(null);
+  const [cursor, setCursor] = React.useState<Point | null>(null);
+  const points = usePoints({ active: tool === "polygon" });
   const [color, setColor] = React.useState<Color>(Color.random());
   const addElement = useSelector(({ actions }) => actions.addElement);
   const handleMouseDown: React.EventHandler<React.MouseEvent> = (e) => {
+    if (!["rect", "ellipse", "quote"].includes(tool)) return;
     setStartDrag(localPosition(e));
-    setCurrentDrag(null);
   };
   const handleMouseMove: React.EventHandler<React.MouseEvent> = (e) => {
-    setCurrentDrag(localPosition(e));
+    setCursor(localPosition(e));
   };
   const handleMouseUp: React.EventHandler<React.MouseEvent> = (e) => {
-    setCurrentDrag(null);
+    setCursor(null);
     if (startDrag === null) return;
     setStartDrag(null);
     setColor(Color.random());
@@ -37,6 +40,14 @@ const Canvas: React.FC = () => {
       addElement(boundary[tool](startDrag, localPosition(e), color));
     }
   };
+  const handleMouseLeave: React.EventHandler<React.MouseEvent> = () => {
+    setStartDrag(null);
+    setCursor(null);
+  };
+  const handleClick: React.EventHandler<React.MouseEvent> = (e) => {
+    if (tool !== "polygon") return;
+    points.push(localPosition(e));
+  };
   return (
     <svg
       width="250"
@@ -45,6 +56,8 @@ const Canvas: React.FC = () => {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
       data-testid="canvas"
     >
       {elements.map(({ id, value }) => (
@@ -53,18 +66,54 @@ const Canvas: React.FC = () => {
         </Selectable>
       ))}
       {do_(() => {
-        if (startDrag === null) return null;
-        if (currentDrag === null) return null;
-        if (tool === "quote" && selectedToken !== null)
+        if (tool === "quote" && selectedToken !== null) {
+          if (startDrag === null) return null;
+          if (cursor === null) return null;
           return (
-            <SVGElem
-              value={boundary.quote(startDrag, currentDrag, selectedToken)}
-            />
+            <SVGElem value={boundary.quote(startDrag, cursor, selectedToken)} />
           );
-        if (tool === "rect" || tool === "ellipse")
+        }
+        if (tool === "rect" || tool === "ellipse") {
+          if (startDrag === null) return null;
+          if (cursor === null) return null;
+          return <SVGElem value={boundary[tool](startDrag, cursor, color)} />;
+        }
+        if (tool === "polygon") {
+          if (points.value.length === 0) return null;
           return (
-            <SVGElem value={boundary[tool](startDrag, currentDrag, color)} />
+            <>
+              <SVGElem
+                value={{
+                  type: "polygon",
+                  points: [
+                    ...points.value.map(({ x, y }) => pair(uint8(x), uint8(y))),
+                    ...(cursor ? [pair(uint8(cursor.x), uint8(cursor.y))] : []),
+                  ],
+                  fill: color,
+                }}
+              />
+              <circle
+                cx={points.value[0].x}
+                cy={points.value[0].y}
+                r={3}
+                stroke={Color.stringify(color)}
+                fill="#fff"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  points.clear();
+                  addElement({
+                    type: "polygon",
+                    points: points.value.map(({ x, y }) =>
+                      pair(uint8(x), uint8(y))
+                    ),
+                    fill: color,
+                  });
+                  setColor(Color.random());
+                }}
+              />
+            </>
           );
+        }
         return null;
       })}
       <style jsx>{`
@@ -75,5 +124,7 @@ const Canvas: React.FC = () => {
     </svg>
   );
 };
+
+const pair = <T, U>(t: T, u: U): [T, U] => [t, u];
 
 export default Canvas;

@@ -58,6 +58,15 @@ const Toolbox: React.FC = () => {
           <ellipse cx="15" cy="15" rx="10" ry="10" fill="#555" />
         </svg>
       </button>
+      <button
+        className="polygon"
+        onClick={() => setTool("polygon")}
+        aria-label="polygon"
+      >
+        <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="15,4 26,15 15,15 15,26 4,15" fill="#555" />
+        </svg>
+      </button>
       <style jsx>{`
         .container {
           border: 1px solid #ccc;

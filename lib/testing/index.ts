@@ -32,6 +32,20 @@ export const drag = (element: Element, steps = 20, duration = 100) => {
   };
 };
 
+export const click = (element: Element) => {
+  return {
+    at: (points: Point[]) => {
+      const { left, top } = element.getBoundingClientRect();
+      points.forEach(({ x, y }) => {
+        fireEvent.click(element, {
+          clientX: left + x,
+          clientY: top + y,
+        });
+      });
+    },
+  };
+};
+
 const sleep = (ms: number) =>
   new Promise((resolve) => {
     setTimeout(resolve, ms);
