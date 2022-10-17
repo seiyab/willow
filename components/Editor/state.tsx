@@ -1,5 +1,6 @@
 import produce from "immer";
 import { GraphicalElement, GraphicalElementType } from "lib/element";
+import { range } from "lib/util";
 import React, { SetStateAction } from "react";
 import { createContext, useContextSelector } from "use-context-selector";
 
@@ -21,8 +22,23 @@ export const entity = <T,>(value: T): Entity<T> => ({
 });
 
 const createID = (): (() => string) => {
-  let i = 0;
-  return () => String(i++);
+  const a = "a".charCodeAt(0);
+  const A = "A".charCodeAt(0);
+  const chars = [
+    ...range(10).map((i) => `${i}`),
+    ...range(26).map((i) => String.fromCharCode(a + i)),
+    ...range(26).map((i) => String.fromCharCode(A + i)),
+    "+",
+    "-",
+    "_",
+    "*",
+  ];
+  return () =>
+    range(5)
+      .map(
+        () => chars[Math.floor((Math.random() * chars.length) % chars.length)]
+      )
+      .join("");
 };
 
 const id = createID();
@@ -47,6 +63,12 @@ export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
       }),
       selectElement: mutate((draft, id: string | null) => {
         draft.selectedElement = id;
+        draft.tool = "cursor";
+      }),
+      modifyElement: mutate((draft, id: string, newElem: GraphicalElement) => {
+        const target = draft.elements.find((e) => e.id === id);
+        if (target === undefined) return;
+        target.value = newElem;
       }),
       clearElements: mutate((draft) => {
         draft.elements = [];

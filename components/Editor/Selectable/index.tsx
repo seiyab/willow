@@ -11,9 +11,13 @@ const Selectable: React.FC<Props> = ({ id, children }) => {
   const selectElement = useSelector(({ actions }) => actions.selectElement);
   const selectedElement = useSelector(({ state }) => state.selectedElement);
   const [g, setG] = React.useState<SVGGraphicsElement | null>(null);
+  const handleClick = () => {
+    if (tool !== "cursor") return;
+    selectElement(id);
+  };
   return (
     <>
-      <g ref={setG} onClick={() => selectElement(id)}>
+      <g ref={setG} onClick={handleClick}>
         {children}
       </g>
       {selectedElement === id && g && (
