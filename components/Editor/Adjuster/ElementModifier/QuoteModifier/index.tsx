@@ -38,6 +38,7 @@ const QuoteModifier: React.FC = () => {
           min="0"
           max="500"
           value={quote.size.value()}
+          step="2"
           onChange={(e) =>
             modifyElement(element.id, {
               ...quote,
@@ -51,6 +52,7 @@ const QuoteModifier: React.FC = () => {
           min="0"
           max="360"
           value={quote.rotate.value()}
+          step="3"
           onChange={(e) =>
             modifyElement(element.id, {
               ...quote,
