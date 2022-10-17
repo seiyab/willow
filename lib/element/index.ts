@@ -20,7 +20,6 @@ export type Rect = {
   width: Uint8;
   height: Uint8;
   fill: Color;
-  stroke: Color;
 };
 
 export type Ellipse = {
@@ -30,7 +29,6 @@ export type Ellipse = {
   rx: Uint8;
   ry: Uint8;
   fill: Color;
-  stroke: Color;
 };
 
 export type Polygon = {

@@ -37,7 +37,7 @@ contract("token", ([alice, bob]) => {
 
     assert.equal(
       svg,
-      '<svg width="250" height="250" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="100" width="50" height="50" fill="rgba(255,0,0,1.0)" stroke="rgba(0,0,0,0)" /></svg>'
+      '<svg width="250" height="250" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="100" width="50" height="50" fill="rgba(255,0,0,1.0)" /></svg>'
     );
   });
 });
@@ -50,7 +50,6 @@ const payload = [
     width: uint8(50),
     height: uint8(50),
     fill: rgba(15, 0, 0, 15),
-    stroke: rgba(0, 0, 0, 0),
   }),
 ];
 
