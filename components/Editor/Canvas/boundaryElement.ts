@@ -31,7 +31,6 @@ export const boundary = {
       width,
       height,
       fill,
-      stroke: rgba(0, 0, 0, 0),
     };
   },
   ellipse(p1: Point, p2: Point, fill: Color): Ellipse {
@@ -46,7 +45,6 @@ export const boundary = {
       rx,
       ry,
       fill,
-      stroke: rgba(0, 0, 0, 0),
     };
   },
 };
