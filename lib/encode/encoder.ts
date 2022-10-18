@@ -35,14 +35,12 @@ const quote: Encoder<Quote> = ({ id, cx, cy, rotate, size }) => {
   ].map(uint8);
 };
 
-const rect: Encoder<Rect> = ({ x, y, width, height, fill, stroke }) => {
-  const [f, s] = [encodeColor(fill), encodeColor(stroke)];
-  return [uint8(0x01), x, y, width, height, ...f, ...s];
+const rect: Encoder<Rect> = ({ x, y, width, height, fill }) => {
+  return [uint8(0x01), x, y, width, height, ...encodeColor(fill)];
 };
 
-const ellipse: Encoder<Ellipse> = ({ cx, cy, rx, ry, fill, stroke }) => {
-  const [f, s] = [encodeColor(fill), encodeColor(stroke)];
-  return [uint8(0x02), cx, cy, rx, ry, ...f, ...s];
+const ellipse: Encoder<Ellipse> = ({ cx, cy, rx, ry, fill }) => {
+  return [uint8(0x02), cx, cy, rx, ry, ...encodeColor(fill)];
 };
 
 const polygon: Encoder<Polygon> = ({ points, fill }) => {

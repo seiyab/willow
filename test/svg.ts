@@ -27,8 +27,8 @@ contract("assert svg", ([alice, bob]) => {
   it("rect", async () => {
     await contractInstance.create(
       [
-        bytes([0x01, 10, 30, 100, 150, 0xf0, 0x0f, 0x00, 0x00]),
-        bytes([0x01, 100, 50, 200, 100, 0x0a, 0xaf, 0x00, 0x00]),
+        bytes([0x01, 10, 30, 100, 150, 0xf0, 0x0f]),
+        bytes([0x01, 100, 50, 200, 100, 0x0a, 0xaf]),
       ],
       { from: alice }
     );
@@ -49,7 +49,6 @@ contract("assert svg", ([alice, bob]) => {
         rx: uint8(60),
         ry: uint8(30),
         fill: rgba(1, 2, 3, 4),
-        stroke: rgba(5, 6, 7, 8),
       }),
       encode<Ellipse>({
         type: "ellipse",
@@ -58,7 +57,6 @@ contract("assert svg", ([alice, bob]) => {
         rx: uint8(40),
         ry: uint8(80),
         fill: rgba(8, 7, 6, 5),
-        stroke: rgba(4, 3, 2, 1),
       }),
     ]);
 
@@ -80,7 +78,6 @@ contract("assert svg", ([alice, bob]) => {
           width: uint8(150),
           height: uint8(150),
           fill: rgba(15, 0, 0, 15),
-          stroke: rgba(0, 0, 0, 0),
         }),
       ],
       { from: alice }
@@ -96,7 +93,6 @@ contract("assert svg", ([alice, bob]) => {
           rx: uint8(80),
           ry: uint8(100),
           fill: rgba(0, 0, 15, 7),
-          stroke: rgba(0, 0, 0, 0),
         }),
       ],
       { from: bob }

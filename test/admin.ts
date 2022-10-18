@@ -107,7 +107,6 @@ const payload = [
     width: uint8(50),
     height: uint8(50),
     fill: rgba(15, 0, 0, 15),
-    stroke: rgba(0, 0, 0, 0),
   }),
 ];
 

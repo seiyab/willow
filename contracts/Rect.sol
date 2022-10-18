@@ -12,7 +12,7 @@ contract Rect is Decoder {
     if (d[0] != 0x01) {
       return false;
     }
-    if (d.length != 9) {
+    if (d.length != 7) {
       return false;
     }
     return true;
@@ -34,8 +34,6 @@ contract Rect is Decoder {
         uint8(d[4]).toString(),
         '" fill="',
         Lib.colorString(d[5], d[6]),
-        '" stroke="',
-        Lib.colorString(d[7], d[8]),
         '" />'
       ),
       true
