@@ -5,6 +5,7 @@ import { encode } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
 import { stepUint, uint8 } from "lib/element/values";
 import { Ellipse, Polygon, Quote, Rect } from "lib/element";
+import { range } from "lib/util";
 
 const Willow = artifacts.require("Willow");
 
@@ -151,5 +152,76 @@ contract("assert svg", ([alice, bob]) => {
       svg,
       await fs.readFile(`${__dirname}/svgs/polygon.svg`, { encoding: "utf-8" })
     );
+  });
+
+  describe("complex", () => {
+    it("100 polygons", async () => {
+      await contractInstance.create(
+        range(100).map((i) =>
+          encode<Polygon>({
+            type: "polygon",
+            fill: rgba(i % 0xf, (i + 5) % 0xf, (i + 10) % 0xf, 0x8),
+            points: range(6).map((j) => [
+              uint8(
+                125 + (120 - i) * Math.sin(2 * Math.PI * (j / 6 + i / 100))
+              ),
+              uint8(
+                125 + (120 - i) * Math.cos(2 * Math.PI * (j / 6 + i / 100))
+              ),
+            ]),
+          })
+        ),
+        { from: alice }
+      );
+      const svg = await contractInstance.draw(await latestID());
+
+      return assert.equal(
+        svg,
+        await fs.readFile(`${__dirname}/svgs/100-polygons.svg`, {
+          encoding: "utf-8",
+        })
+      );
+    });
+
+    it("4 quotes of 4 quotes of 4 rects", async () => {
+      await contractInstance.create(
+        range(4).map((i) =>
+          encode<Rect>({
+            type: "rect",
+            x: uint8(50 + 125 * (i % 2)),
+            y: uint8(50 + 125 * Math.floor(i / 2)),
+            width: uint8(75),
+            height: uint8(75),
+            fill: rgba(i, 0xa - 2 * i, 0xf, 0xf),
+          })
+        ),
+        { from: alice }
+      );
+
+      for (const _ of range(2)) {
+        const prev = await latestID();
+        await contractInstance.create(
+          range(4).map((i) =>
+            encode<Quote>({
+              type: "quote",
+              id: prev,
+              cx: uint8(25 + 100 * (i % 2)),
+              cy: uint8(25 + 100 * Math.floor(i / 2)),
+              size: stepUint(100, 2),
+              rotate: stepUint(0, 3),
+            })
+          ),
+          { from: alice }
+        );
+      }
+      const svg = await contractInstance.draw(await latestID());
+
+      return assert.equal(
+        svg,
+        await fs.readFile(`${__dirname}/svgs/nested-quote-2.svg`, {
+          encoding: "utf-8",
+        })
+      );
+    });
   });
 });
