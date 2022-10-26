@@ -4,6 +4,7 @@ import { do_ } from "@seiyab/do-expr";
 import { encode } from "lib/encode/encoder";
 import { Rect } from "lib/element";
 import { uint8 } from "lib/element/values";
+import { id } from "lib/util";
 
 const Willow = artifacts.require("Willow");
 
@@ -42,8 +43,8 @@ contract("token", ([alice, bob]) => {
   });
 });
 
-const payload = [
-  encode<Rect>({
+const payload = encode([
+  id<Rect>({
     type: "rect",
     x: uint8(100),
     y: uint8(100),
@@ -51,7 +52,7 @@ const payload = [
     height: uint8(50),
     fill: rgba(15, 0, 0, 15),
   }),
-];
+]);
 
 const fetch = (uri: string) => {
   const [_schema, afterSchema] = split(uri).on(":");

@@ -5,7 +5,7 @@ import "./Admin.sol";
 
 contract Repository {
   Admin private admin;
-  bytes[][] private data;
+  bytes[] private data;
   uint private max;
 
   constructor() {
@@ -23,17 +23,14 @@ contract Repository {
     max = newMax;
   }
 
-  function append(bytes[] calldata newData) external returns (uint256) {
+  function append(bytes calldata newData) external returns (uint256) {
     uint256 id = data.length;
     require(id < max, 'exceeded max');
-    bytes[] storage d = data.push();
-    for (uint i = 0; i < newData.length; ++i) {
-      d.push(newData[i]);
-    }
+    data.push(newData);
     return id;
   }
 
-  function get(uint256 id) external view returns (bytes[] memory) {
+  function get(uint256 id) external view returns (bytes memory) {
     return data[id];
   }
 

@@ -11,10 +11,9 @@ const Submit: React.FC = () => {
       onClick={async () => {
         const wi = await willow();
         const accounts = await web3.eth.requestAccounts();
-        await wi.create(
-          elements.map(({ value }) => encode(value)),
-          { from: accounts[0] }
-        );
+        await wi.create(encode(elements.map(({ value }) => value)), {
+          from: accounts[0],
+        });
         clearElements();
       }}
     >

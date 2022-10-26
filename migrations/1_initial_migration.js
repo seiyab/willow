@@ -13,9 +13,7 @@ module.exports = async function (deployer) {
   await deployer.deploy(Drawer, Repository.address);
   await deployer.deploy(Willow, Repository.address, Drawer.address);
   const willow = await Willow.deployed();
-  await willow.create([
-    "0x01000096963c6f",
-    "0x01c80032fa3aff",
-    "0x0100c89632fa1f",
-  ]);
+  await willow.create(
+    ["0x03", "01000096963c6f", "01c80032fa3aff", "0100c89632fa1f"].join("")
+  );
 };

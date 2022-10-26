@@ -8,35 +8,36 @@ import "./Lib.sol";
 contract Rect is Decoder {
   using Strings for uint8;
 
-  function valid(bytes memory d) public pure override returns (bool) {
-    if (d[0] != 0x01) {
-      return false;
+  function willConsume(bytes memory d, uint pos) public pure override returns (uint) {
+    if (d[pos] != 0x01) {
+      return 0;
     }
-    if (d.length != 7) {
-      return false;
+    if (d.length < pos + 7) {
+      return 0;
     }
-    return true;
+    return 7;
   }
 
-  function decode(bytes memory d) public pure override returns (bytes memory element, bool) {
-    if (!valid(d)) {
-      return ("", false);
+  function decode(bytes memory d, uint pos) public pure override returns (bytes memory element, uint) {
+    uint c = willConsume(d, pos);
+    if (c == 0) {
+      return ("", 0);
     }
     return (
       abi.encodePacked(
         '<rect x="',
-        uint8(d[1]).toString(),
+        uint8(d[pos + 1]).toString(),
         '" y="',
-        uint8(d[2]).toString(),
+        uint8(d[pos + 2]).toString(),
         '" width="',
-        uint8(d[3]).toString(),
+        uint8(d[pos + 3]).toString(),
         '" height="',
-        uint8(d[4]).toString(),
+        uint8(d[pos + 4]).toString(),
         '" fill="',
-        Lib.colorString(d[5], d[6]),
+        Lib.colorString(d[pos + 5], d[pos + 6]),
         '" />'
       ),
-      true
+      c
     );
   }
 }

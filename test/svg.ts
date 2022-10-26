@@ -1,11 +1,10 @@
 import { promises as fs } from "fs";
 import { WillowInstance } from "types/truffle-contracts";
-import { bytes } from "lib/encode/bytes";
 import { encode } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
 import { stepUint, uint8 } from "lib/element/values";
 import { Ellipse, Polygon, Quote, Rect } from "lib/element";
-import { range } from "lib/util";
+import { id, range } from "lib/util";
 
 const Willow = artifacts.require("Willow");
 
@@ -27,10 +26,24 @@ contract("assert svg", ([alice, bob]) => {
 
   it("rect", async () => {
     await contractInstance.create(
-      [
-        bytes([0x01, 10, 30, 100, 150, 0xf0, 0x0f]),
-        bytes([0x01, 100, 50, 200, 100, 0x0a, 0xaf]),
-      ],
+      encode([
+        id<Rect>({
+          type: "rect",
+          x: uint8(10),
+          y: uint8(30),
+          width: uint8(100),
+          height: uint8(150),
+          fill: rgba(0xf, 0x0, 0x0, 0xf),
+        }),
+        id<Rect>({
+          type: "rect",
+          x: uint8(100),
+          y: uint8(50),
+          width: uint8(200),
+          height: uint8(100),
+          fill: rgba(0x0, 0xa, 0xa, 0xf),
+        }),
+      ]),
       { from: alice }
     );
     const svg = await contractInstance.draw(await latestID());
@@ -42,24 +55,26 @@ contract("assert svg", ([alice, bob]) => {
   });
 
   it("ellipse", async () => {
-    await contractInstance.create([
-      encode<Ellipse>({
-        type: "ellipse",
-        cx: uint8(100),
-        cy: uint8(50),
-        rx: uint8(60),
-        ry: uint8(30),
-        fill: rgba(1, 2, 3, 4),
-      }),
-      encode<Ellipse>({
-        type: "ellipse",
-        cx: uint8(200),
-        cy: uint8(150),
-        rx: uint8(40),
-        ry: uint8(80),
-        fill: rgba(8, 7, 6, 5),
-      }),
-    ]);
+    await contractInstance.create(
+      encode([
+        id<Ellipse>({
+          type: "ellipse",
+          cx: uint8(100),
+          cy: uint8(50),
+          rx: uint8(60),
+          ry: uint8(30),
+          fill: rgba(1, 2, 3, 4),
+        }),
+        id<Ellipse>({
+          type: "ellipse",
+          cx: uint8(200),
+          cy: uint8(150),
+          rx: uint8(40),
+          ry: uint8(80),
+          fill: rgba(8, 7, 6, 5),
+        }),
+      ])
+    );
 
     const svg = await contractInstance.draw(await latestID());
 
@@ -71,8 +86,8 @@ contract("assert svg", ([alice, bob]) => {
 
   it("quote", async () => {
     await contractInstance.create(
-      [
-        encode<Rect>({
+      encode([
+        id<Rect>({
           type: "rect",
           x: uint8(50),
           y: uint8(50),
@@ -80,14 +95,14 @@ contract("assert svg", ([alice, bob]) => {
           height: uint8(150),
           fill: rgba(15, 0, 0, 15),
         }),
-      ],
+      ]),
       { from: alice }
     );
     const rectID = await latestID();
 
     await contractInstance.create(
-      [
-        encode<Ellipse>({
+      encode([
+        id<Ellipse>({
           type: "ellipse",
           cx: uint8(125),
           cy: uint8(125),
@@ -95,14 +110,14 @@ contract("assert svg", ([alice, bob]) => {
           ry: uint8(100),
           fill: rgba(0, 0, 15, 7),
         }),
-      ],
+      ]),
       { from: bob }
     );
     const ellipseID = await latestID();
 
     await contractInstance.create(
-      [
-        encode<Quote>({
+      encode([
+        id<Quote>({
           type: "quote",
           id: rectID,
           cx: uint8(175),
@@ -110,7 +125,7 @@ contract("assert svg", ([alice, bob]) => {
           rotate: stepUint(45, 3),
           size: stepUint(124, 2),
         }),
-        encode<Quote>({
+        id<Quote>({
           type: "quote",
           id: ellipseID,
           cx: uint8(75),
@@ -118,7 +133,7 @@ contract("assert svg", ([alice, bob]) => {
           rotate: stepUint(90, 3),
           size: stepUint(124, 2),
         }),
-      ],
+      ]),
       { from: alice }
     );
 
@@ -132,8 +147,8 @@ contract("assert svg", ([alice, bob]) => {
 
   it("polygon", async () => {
     await contractInstance.create(
-      [
-        encode<Polygon>({
+      encode([
+        id<Polygon>({
           type: "polygon",
           fill: rgba(0x2, 0xf, 0xc, 0xf),
           points: [
@@ -143,7 +158,7 @@ contract("assert svg", ([alice, bob]) => {
             [uint8(250), uint8(0)],
           ],
         }),
-      ],
+      ]),
       { from: alice }
     );
     const svg = await contractInstance.draw(await latestID());
@@ -157,19 +172,21 @@ contract("assert svg", ([alice, bob]) => {
   describe("complex", () => {
     it("100 polygons", async () => {
       await contractInstance.create(
-        range(100).map((i) =>
-          encode<Polygon>({
-            type: "polygon",
-            fill: rgba(i % 0xf, (i + 5) % 0xf, (i + 10) % 0xf, 0x8),
-            points: range(6).map((j) => [
-              uint8(
-                125 + (120 - i) * Math.sin(2 * Math.PI * (j / 6 + i / 100))
-              ),
-              uint8(
-                125 + (120 - i) * Math.cos(2 * Math.PI * (j / 6 + i / 100))
-              ),
-            ]),
-          })
+        encode(
+          range(100).map((i) =>
+            id<Polygon>({
+              type: "polygon",
+              fill: rgba(i % 0xf, (i + 5) % 0xf, (i + 10) % 0xf, 0x8),
+              points: range(6).map((j) => [
+                uint8(
+                  125 + (120 - i) * Math.sin(2 * Math.PI * (j / 6 + i / 100))
+                ),
+                uint8(
+                  125 + (120 - i) * Math.cos(2 * Math.PI * (j / 6 + i / 100))
+                ),
+              ]),
+            })
+          )
         ),
         { from: alice }
       );
@@ -185,15 +202,17 @@ contract("assert svg", ([alice, bob]) => {
 
     it("4 quotes of 4 quotes of 4 rects", async () => {
       await contractInstance.create(
-        range(4).map((i) =>
-          encode<Rect>({
-            type: "rect",
-            x: uint8(50 + 125 * (i % 2)),
-            y: uint8(50 + 125 * Math.floor(i / 2)),
-            width: uint8(75),
-            height: uint8(75),
-            fill: rgba(i, 0xa - 2 * i, 0xf, 0xf),
-          })
+        encode(
+          range(4).map((i) =>
+            id<Rect>({
+              type: "rect",
+              x: uint8(50 + 125 * (i % 2)),
+              y: uint8(50 + 125 * Math.floor(i / 2)),
+              width: uint8(75),
+              height: uint8(75),
+              fill: rgba(i, 0xa - 2 * i, 0xf, 0xf),
+            })
+          )
         ),
         { from: alice }
       );
@@ -201,15 +220,17 @@ contract("assert svg", ([alice, bob]) => {
       for (const _ of range(2)) {
         const prev = await latestID();
         await contractInstance.create(
-          range(4).map((i) =>
-            encode<Quote>({
-              type: "quote",
-              id: prev,
-              cx: uint8(25 + 100 * (i % 2)),
-              cy: uint8(25 + 100 * Math.floor(i / 2)),
-              size: stepUint(100, 2),
-              rotate: stepUint(0, 3),
-            })
+          encode(
+            range(4).map((i) =>
+              id<Quote>({
+                type: "quote",
+                id: prev,
+                cx: uint8(25 + 100 * (i % 2)),
+                cy: uint8(25 + 100 * Math.floor(i / 2)),
+                size: stepUint(100, 2),
+                rotate: stepUint(0, 3),
+              })
+            )
           ),
           { from: alice }
         );

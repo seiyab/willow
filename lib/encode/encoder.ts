@@ -1,19 +1,21 @@
-import { do_ } from "@seiyab/do-expr";
 import { GraphicalElement, Ellipse, Polygon, Quote, Rect } from "lib/element";
 import { uint8, Uint8 } from "lib/element/values";
 import { range } from "lib/util";
 import { bytes } from "./bytes";
 import { encodeColor } from "./color";
 
-export const encode = <E extends GraphicalElement>(e: E): string => {
-  const nums = do_(() => {
-    if (e.type === "rect") return rect(e);
-    if (e.type === "ellipse") return ellipse(e);
-    if (e.type === "quote") return quote(e);
-    if (e.type === "polygon") return polygon(e);
-    throw new Error();
-  });
-  return bytes(nums);
+export const encode = (elements: GraphicalElement[]): string => {
+  const size = uint8(elements.length);
+  if (size !== elements.length) throw new Error();
+  return bytes([size, ...elements.flatMap(elementToBytes)]);
+};
+
+const elementToBytes = (e: GraphicalElement): number[] => {
+  if (e.type === "rect") return rect(e);
+  if (e.type === "ellipse") return ellipse(e);
+  if (e.type === "quote") return quote(e);
+  if (e.type === "polygon") return polygon(e);
+  throw new Error();
 };
 
 type Encoder<T> = (t: T) => Uint8[];
@@ -44,5 +46,7 @@ const ellipse: Encoder<Ellipse> = ({ cx, cy, rx, ry, fill }) => {
 };
 
 const polygon: Encoder<Polygon> = ({ points, fill }) => {
-  return [uint8(0x03), ...encodeColor(fill), ...points.flat()];
+  const size = uint8(points.length);
+  if (size !== points.length) throw new Error();
+  return [uint8(0x03), size, ...encodeColor(fill), ...points.flat()];
 };

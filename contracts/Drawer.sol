@@ -13,6 +13,7 @@ import "./Polygon.sol";
 contract Drawer {
   using Strings for uint8;
   using Strings for uint16;
+  using Strings for uint256;
 
   Decoder[] private decoders;
   Repository private repository;
@@ -38,94 +39,111 @@ contract Drawer {
     return string(pack);
   }
 
-  function validate(bytes[] calldata data) view external {
+  function validate(bytes calldata data) view external {
     require(data.length > 0, 'data.length should not be 0');
-    for (uint i=0; i < data.length; i++) {
-      if (validQuote(data[i])) {
-        continue;
-      }
+    uint n = uint(uint8(data[0]));
+    uint i = 1;
+    for (uint cnt = 0; cnt < n; cnt++) {
+      uint consumed;
 
-      bool valid = false;
-      for (uint j=0; j < decoders.length; j++) {
-        if (decoders[j].valid(data[i])) {
-          valid = true;
+      consumed = quoteWillConsume(data, i);
+
+      for (uint j = 0; j < decoders.length; j++) {
+        if (consumed > 0) {
           break;
         }
+        consumed = decoders[j].willConsume(data, i);
       }
-      require(valid, 'invalid data');
+
+      require(consumed > 0, 'invalid data. no decoder match');
+      i += consumed;
     }
+
+    require(i == data.length, 'invalid data. length of bytes does not match');
   }
 
-  function validQuote(bytes memory d) internal pure returns (bool ok) {
-    if (d[0] != 0x00) {
-      return false;
+  function quoteWillConsume(bytes memory d, uint pos) internal pure returns (uint) {
+    if (d[pos] != 0x00) {
+      return 0;
     }
-    uint addr_length = 256 / 8;
+    uint addr_length = 32;
     uint len = addr_length + 5;
-    if (d.length != len) {
-      return false;
+    if (d.length < pos + len) {
+      return 0;
     }
-    return true;
+    return len;
   }
 
-  function quote(bytes memory d) internal view returns (bytes memory element, bool ok) {
-    if (!validQuote(d)) {
-      return ("", false);
+  function quote(bytes memory d, uint pos) internal view returns (bytes memory element, uint) {
+    uint c = quoteWillConsume(d, pos);
+    if (c == 0) {
+      return ("", 0);
     }
-    uint addr_length = 256 / 8;
     uint256 id = 0;
-    for (uint i = 0; i < addr_length; i++) {
+    // 32 = 256 / 8
+    for (uint i = 0; i < 32; i++) {
       id <<= 8;
-      id += uint8(d[i+1]);
+      id += uint8(d[pos + i+1]);
     }
-    uint16 rotate = uint16(uint8(d[addr_length+3])) * 3;
-    uint16 size = uint16(uint8(d[addr_length+4])) * 2;
+    // workaround for stack too deep
+    string memory cx;
+    string memory cy;
+    string memory rotate;
+    string memory size;
+    string memory halfSize;
+    {
+      cx = uint8(d[pos+32+1]).toString();
+      cy = uint8(d[pos+32+2]).toString();
+      rotate = (uint16(uint8(d[pos+32+3])) * 3).toString();
+      uint16 uintSize = uint16(uint8(d[pos+32+4])) * 2;
+      size = (uintSize).toString();
+      halfSize = (uintSize/2).toString();
+    }
+
     return (
       abi.encodePacked(
         '<image href="data:image/svg+xml;base64,',
         Base64.encode(bytes(draw(id))),
         '" x="-',
-        (size / 2).toString(),
+        halfSize,
         '" y="-',
-        (size / 2).toString(),
+        halfSize,
         '" width="',
-        size.toString(),
+        size,
         '" height="',
-        size.toString(),
+        size,
         '" transform="translate(',
-        uint8(d[addr_length+1]).toString(),
+        cx,
         ',',
-        uint8(d[addr_length+2]).toString(),
+        cy,
         ') rotate(',
-        rotate.toString(),
+        rotate,
         ')" />'
       ),
-      true
+      c
     );
   }
   
   function elements(uint256 tokenID) internal view returns (bytes[] memory) {
-    bytes[] memory data = repository.get(tokenID);
-    bytes[] memory result = new bytes[](data.length);
-    for (uint i = 0; i < data.length; i++) {
+    bytes memory data = repository.get(tokenID);
+    uint n = uint(uint8(data[0]));
+    bytes[] memory result = new bytes[](n);
+    uint cursor = 1;
+    for (uint i=0; i<n; i++) {
       bytes memory item;
-      bool ok;
+      uint consumed;
 
-      (item, ok) = quote(data[i]);
-      if (ok) {
-        result[i] = item;
-        continue;
-      }
+      (item, consumed) = quote(data, cursor);
 
       for (uint j = 0; j < decoders.length; j++) {
-        (item, ok) = decoders[j].decode(data[i]);
-        if (ok) {
+        if (consumed > 0) {
           break;
         }
+        (item, consumed) = decoders[j].decode(data, cursor);
       }
-      if (ok) {
-        result[i] = item;
-      }
+      require(consumed > 0, 'decoding is stuck');
+      cursor += consumed;
+      result[i] = item;
     }
     return result;
   }
