@@ -12,14 +12,16 @@ import "./Drawer.sol";
 contract Willow is ERC721Enumerable {
   Repository private repository;
   Drawer private drawer;
+  IProxyRegistry private immutable proxyRegistry;
 
-  constructor(address r, address d)
+  constructor(address r, address d, address p)
   ERC721('Willow - on-chain svg image storage', 'WILLOW')
   {
     Admin a = new Token0Admin(address(this));
     repository = Repository(r);
     repository.setAdmin(address(a));
     drawer = Drawer(d);
+    proxyRegistry = IProxyRegistry(p);
   }
 
   function create(bytes calldata data) external returns (uint256) {
@@ -52,6 +54,15 @@ contract Willow is ERC721Enumerable {
       )))
     ));
   }
+
+  function isApprovedForAll(address owner, address operator) override(ERC721, IERC721) public view returns (bool) {
+    // Whitelist OpenSea proxy contract for easy trading.
+    if (proxyRegistry.proxies(owner) == operator) {
+      return true;
+    }
+
+    return super.isApprovedForAll(owner, operator);
+  }
 }
 
 contract Token0Admin is Admin {
@@ -64,4 +75,8 @@ contract Token0Admin is Admin {
   function getAdmin() external override view returns (address) {
     return erc721.ownerOf(0);
   }
+}
+
+interface IProxyRegistry {
+  function proxies(address) external view returns (address); 
 }
