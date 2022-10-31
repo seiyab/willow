@@ -7,3 +7,5 @@ export const range = (i: number, end?: number) => {
 export type Point = { x: number; y: number };
 
 export type Override<Super, Sub> = Omit<Super, keyof Sub> & Sub;
+
+export const id = <T>(x: T): T => x;

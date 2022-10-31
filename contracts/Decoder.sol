@@ -2,6 +2,6 @@
 pragma solidity ^0.8.0;
 
 interface Decoder {
-    function valid(bytes memory d) external pure returns (bool);
-    function decode(bytes memory d) external view returns (bytes memory element, bool ok);
+    function willConsume(bytes memory d, uint pos) external pure returns (uint);
+    function decode(bytes memory d, uint pos) external view returns (bytes memory element, uint progress);
 }

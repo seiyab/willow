@@ -2,7 +2,7 @@ import { Rect } from "lib/element";
 import { rgba } from "lib/element/color";
 import { uint8 } from "lib/element/values";
 import { encode } from "lib/encode/encoder";
-import { range } from "lib/util";
+import { id, range } from "lib/util";
 import { WillowInstance } from "types/truffle-contracts";
 
 const Willow = artifacts.require("Willow");
@@ -99,8 +99,8 @@ contract("admin", ([alice, bob, clara]) => {
   });
 });
 
-const payload = [
-  encode<Rect>({
+const payload = encode([
+  id<Rect>({
     type: "rect",
     x: uint8(100),
     y: uint8(100),
@@ -108,7 +108,7 @@ const payload = [
     height: uint8(50),
     fill: rgba(15, 0, 0, 15),
   }),
-];
+]);
 
 const expectAsyncThrow = async (p: () => Promise<unknown>, message: string) => {
   try {

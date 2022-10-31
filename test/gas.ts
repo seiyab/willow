@@ -3,7 +3,7 @@ import { encode } from "lib/encode/encoder";
 import { rgba } from "lib/element/color";
 import { stepUint, uint8 } from "lib/element/values";
 import { Ellipse, Polygon, Quote, Rect } from "lib/element";
-import { range } from "lib/util";
+import { id, range } from "lib/util";
 
 const Willow = artifacts.require("Willow");
 
@@ -17,8 +17,8 @@ contract("measure gas cost", ([alice]) => {
   describe("rect", () => {
     it("1 rect", async () => {
       const tx = await wi.create(
-        [
-          encode<Rect>({
+        encode([
+          id<Rect>({
             type: "rect",
             x: uint8(50),
             y: uint8(50),
@@ -26,17 +26,17 @@ contract("measure gas cost", ([alice]) => {
             height: uint8(150),
             fill: rgba(15, 0, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 223_600);
+      return assert.equal(tx.receipt.gasUsed, 199_949);
     });
 
     it("2 rects", async () => {
       const tx = await wi.create(
-        [
-          encode<Rect>({
+        encode([
+          id<Rect>({
             type: "rect",
             x: uint8(50),
             y: uint8(50),
@@ -44,7 +44,7 @@ contract("measure gas cost", ([alice]) => {
             height: uint8(150),
             fill: rgba(15, 0, 0, 15),
           }),
-          encode<Rect>({
+          id<Rect>({
             type: "rect",
             x: uint8(50),
             y: uint8(50),
@@ -52,36 +52,38 @@ contract("measure gas cost", ([alice]) => {
             height: uint8(150),
             fill: rgba(15, 0, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 252_541);
+      return assert.equal(tx.receipt.gasUsed, 204_107);
     });
 
     it("100 rects", async () => {
       const tx = await wi.create(
-        range(100).map((i) =>
-          encode<Rect>({
-            type: "rect",
-            x: uint8(i),
-            y: uint8(i),
-            width: uint8(1),
-            height: uint8(1),
-            fill: rgba(15, 0, 0, 15),
-          })
+        encode(
+          range(100).map((i) =>
+            id<Rect>({
+              type: "rect",
+              x: uint8(i),
+              y: uint8(i),
+              width: uint8(1),
+              height: uint8(1),
+              fill: rgba(15, 0, 0, 15),
+            })
+          )
         ),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 3_090_003);
+      return assert.equal(tx.receipt.gasUsed, 1145927);
     });
   });
 
   it("1 ellipse", async () => {
     const tx = await wi.create(
-      [
-        encode<Ellipse>({
+      encode([
+        id<Ellipse>({
           type: "ellipse",
           cx: uint8(125),
           cy: uint8(125),
@@ -89,19 +91,19 @@ contract("measure gas cost", ([alice]) => {
           ry: uint8(100),
           fill: rgba(15, 0, 0, 15),
         }),
-      ],
+      ]),
       { from: alice }
     );
 
-    return assert.equal(tx.receipt.gasUsed, 231_043);
+    return assert.equal(tx.receipt.gasUsed, 207_414);
   });
 
   describe("quote", () => {
     let rect: number;
     before(async () => {
       await wi.create(
-        [
-          encode<Rect>({
+        encode([
+          id<Rect>({
             type: "rect",
             x: uint8(50),
             y: uint8(50),
@@ -109,7 +111,7 @@ contract("measure gas cost", ([alice]) => {
             height: uint8(150),
             fill: rgba(15, 0, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
@@ -118,8 +120,8 @@ contract("measure gas cost", ([alice]) => {
 
     it("1 quote", async () => {
       const tx = await wi.create(
-        [
-          encode<Quote>({
+        encode([
+          id<Quote>({
             type: "quote",
             id: rect,
             cx: uint8(125),
@@ -127,17 +129,17 @@ contract("measure gas cost", ([alice]) => {
             size: stepUint(100, 2),
             rotate: stepUint(0, 3),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 239_064);
+      return assert.equal(tx.receipt.gasUsed, 237_184);
     });
 
     it("quote of quote", async () => {
       await wi.create(
-        [
-          encode<Quote>({
+        encode([
+          id<Quote>({
             type: "quote",
             id: rect,
             cx: uint8(125),
@@ -145,15 +147,15 @@ contract("measure gas cost", ([alice]) => {
             size: stepUint(100, 2),
             rotate: stepUint(0, 3),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
       const q = await latestID();
 
       const tx = await wi.create(
-        [
-          encode<Quote>({
+        encode([
+          id<Quote>({
             type: "quote",
             id: q,
             cx: uint8(125),
@@ -161,19 +163,19 @@ contract("measure gas cost", ([alice]) => {
             size: stepUint(100, 2),
             rotate: stepUint(0, 3),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 239_064);
+      return assert.equal(tx.receipt.gasUsed, 237_184);
     });
   });
 
   describe("polygon", async () => {
     it("3 points", async () => {
       const tx = await wi.create(
-        [
-          encode<Polygon>({
+        encode([
+          id<Polygon>({
             type: "polygon",
             points: [
               [uint8(100), uint8(100)],
@@ -182,17 +184,17 @@ contract("measure gas cost", ([alice]) => {
             ],
             fill: rgba(15, 0, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 238_513);
+      return assert.equal(tx.receipt.gasUsed, 215_787);
     });
 
     it("10 points", async () => {
       const tx = await wi.create(
-        [
-          encode<Polygon>({
+        encode([
+          id<Polygon>({
             type: "polygon",
             points: range(10).map((i) => [
               uint8(125 + 25 * Math.sin(i / 10)),
@@ -200,17 +202,17 @@ contract("measure gas cost", ([alice]) => {
             ]),
             fill: rgba(15, 0, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 238_681);
+      return assert.equal(tx.receipt.gasUsed, 215_955);
     });
 
     it("100 points", async () => {
       const tx = await wi.create(
-        [
-          encode<Polygon>({
+        encode([
+          id<Polygon>({
             type: "polygon",
             points: range(100).map((i) => [
               uint8(125 + 25 * Math.sin(i / 100)),
@@ -218,19 +220,19 @@ contract("measure gas cost", ([alice]) => {
             ]),
             fill: rgba(15, 0, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 397_238);
+      return assert.equal(tx.receipt.gasUsed, 374_512);
     });
   });
 
   describe("complex", () => {
     it("10 rects, 10 ellipses, 10 triangles, 3 quotes", async () => {
       await wi.create(
-        [
-          encode<Polygon>({
+        encode([
+          id<Polygon>({
             type: "polygon",
             points: range(6).map((i) => [
               uint8(125 + 25 * Math.sin(i / 6)),
@@ -238,15 +240,15 @@ contract("measure gas cost", ([alice]) => {
             ]),
             fill: rgba(0, 15, 0, 15),
           }),
-        ],
+        ]),
         { from: alice }
       );
       const hexagon = await latestID();
 
       const tx = await wi.create(
-        [
+        encode([
           ...range(10).map((i) =>
-            encode<Rect>({
+            id<Rect>({
               type: "rect",
               x: uint8(i * 10),
               y: uint8(i * 10),
@@ -256,7 +258,7 @@ contract("measure gas cost", ([alice]) => {
             })
           ),
           ...range(10).map((i) =>
-            encode<Ellipse>({
+            id<Ellipse>({
               type: "ellipse",
               cx: uint8(i * 10 + 100),
               cy: uint8(i * 10 + 100),
@@ -266,7 +268,7 @@ contract("measure gas cost", ([alice]) => {
             })
           ),
           ...range(10).map((i) =>
-            encode<Polygon>({
+            id<Polygon>({
               type: "polygon",
               points: range(8).map((j) => [
                 uint8(125 + 25 * Math.sin(j / 8) + i * 2),
@@ -276,7 +278,7 @@ contract("measure gas cost", ([alice]) => {
             })
           ),
           ...range(3).map((i) =>
-            encode<Quote>({
+            id<Quote>({
               type: "quote",
               id: hexagon,
               cx: uint8(125),
@@ -285,11 +287,11 @@ contract("measure gas cost", ([alice]) => {
               rotate: stepUint(i * 30, 3),
             })
           ),
-        ],
+        ]),
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 1_314_818);
+      return assert.equal(tx.receipt.gasUsed, 778_723);
     });
   });
 });

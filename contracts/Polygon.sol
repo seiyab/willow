@@ -8,36 +8,44 @@ import "./Lib.sol";
 contract Polygon is Decoder {
   using Strings for uint8;
 
-  function valid(bytes memory d) public pure override returns (bool) {
-    if (d.length < 3) {
-        return false;
+  // [0x03, size, fill0, fill1, x0, y0, x1, y1, ...]
+
+  function willConsume(bytes memory d, uint pos) public pure override returns (uint) {
+    if (d.length < pos + 4) {
+        return 0;
     }
-    if (d[0] != 0x03) {
-      return false;
+    if (d[pos] != 0x03) {
+      return 0;
     }
-    return true;
+    uint8 size = uint8(d[pos + 1]);
+    uint c = 4 + uint(size) * 2;
+    if (d.length < pos + c) {
+      return 0;
+    }
+    return c;
   }
 
-  function decode(bytes memory d) public pure override returns (bytes memory element, bool) {
-    if (!valid(d)) {
-      return ("", false);
+  function decode(bytes memory d, uint pos) public pure override returns (bytes memory element, uint) {
+    uint c = willConsume(d, pos);
+    if (c == 0) {
+      return ("", 0);
     }
-    uint length = (d.length - 3) / 2;
+    uint length = uint((int(c) - 4) / 2);
     bytes[] memory points = new bytes[](length);
     for (uint i=0; i<length; ++i) {
       points[i] = abi.encodePacked(
-        uint8(d[3 + i*2]).toString(),
+        uint8(d[pos + 4 + i*2]).toString(),
         ",",
-        uint8(d[4 + i*2]).toString(),
+        uint8(d[pos + 5 + i*2]).toString(),
         " "
       );
     }
     return (abi.encodePacked(
       '<polygon fill="',
-      Lib.colorString(d[1], d[2]),
+      Lib.colorString(d[pos + 2], d[pos + 3]),
       '" points="',
       Lib.concat(points),
       '"/>'
-    ), true);
+    ), c);
   }
 }
