@@ -24,34 +24,43 @@ contract("assert svg", ([alice, bob]) => {
     );
   });
 
-  it("rect", async () => {
-    await contractInstance.create(
-      encode([
-        id<Rect>({
-          type: "rect",
-          x: uint8(10),
-          y: uint8(30),
-          width: uint8(100),
-          height: uint8(150),
-          fill: rgba(0xf, 0x0, 0x0, 0xf),
-        }),
-        id<Rect>({
-          type: "rect",
-          x: uint8(100),
-          y: uint8(50),
-          width: uint8(200),
-          height: uint8(100),
-          fill: rgba(0x0, 0xa, 0xa, 0xf),
-        }),
-      ]),
-      { from: alice }
-    );
-    const svg = await contractInstance.draw(await latestID());
+  describe("rect", () => {
+    const data = encode([
+      id<Rect>({
+        type: "rect",
+        x: uint8(10),
+        y: uint8(30),
+        width: uint8(100),
+        height: uint8(150),
+        fill: rgba(0xf, 0x0, 0x0, 0xf),
+      }),
+      id<Rect>({
+        type: "rect",
+        x: uint8(100),
+        y: uint8(50),
+        width: uint8(200),
+        height: uint8(100),
+        fill: rgba(0x0, 0xa, 0xa, 0xf),
+      }),
+    ]);
+    it("draw", async () => {
+      const svg = await contractInstance.preview(data);
 
-    return assert.equal(
-      svg,
-      await fs.readFile(`${__dirname}/svgs/a.svg`, { encoding: "utf-8" })
-    );
+      return assert.equal(
+        svg,
+        await fs.readFile(`${__dirname}/svgs/a.svg`, { encoding: "utf-8" })
+      );
+    });
+
+    it("preview", async () => {
+      await contractInstance.create(data, { from: alice });
+      const svg = await contractInstance.draw(await latestID());
+
+      return assert.equal(
+        svg,
+        await fs.readFile(`${__dirname}/svgs/a.svg`, { encoding: "utf-8" })
+      );
+    });
   });
 
   it("ellipse", async () => {

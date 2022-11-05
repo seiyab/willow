@@ -30,13 +30,18 @@ contract Drawer {
     decoders.push(Decoder(d));
   }
 
-  function draw(uint256 tokenID) public view returns (string memory) {
+  function draw(bytes memory data) public view returns (string memory) {
     bytes memory pack = abi.encodePacked(
       '<svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">',
-      Lib.concat(elements(tokenID)),
+      Lib.concat(elements(data)),
       '</svg>'
     );
     return string(pack);
+  }
+
+  function drawToken(uint256 tokenID) public view returns (string memory) {
+    bytes memory data = repository.get(tokenID);
+    return draw(data);
   }
 
   function validate(bytes calldata data) view external {
@@ -103,7 +108,7 @@ contract Drawer {
     return (
       abi.encodePacked(
         '<image href="data:image/svg+xml;base64,',
-        Base64.encode(bytes(draw(id))),
+        Base64.encode(bytes(drawToken(id))),
         '" x="-',
         halfSize,
         '" y="-',
@@ -124,8 +129,7 @@ contract Drawer {
     );
   }
   
-  function elements(uint256 tokenID) internal view returns (bytes[] memory) {
-    bytes memory data = repository.get(tokenID);
+  function elements(bytes memory data) internal view returns (bytes[] memory) {
     uint n = uint(uint8(data[0]));
     bytes[] memory result = new bytes[](n);
     uint cursor = 1;
