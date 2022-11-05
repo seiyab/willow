@@ -206,8 +206,8 @@ contract("assert svg", ([alice, bob]) => {
           range(4).map((i) =>
             id<Rect>({
               type: "rect",
-              x: uint8(50 + 125 * (i % 2)),
-              y: uint8(50 + 125 * Math.floor(i / 2)),
+              x: uint8(25 + 125 * (i % 2)),
+              y: uint8(25 + 125 * Math.floor(i / 2)),
               width: uint8(75),
               height: uint8(75),
               fill: rgba(i, 0xa - 2 * i, 0xf, 0xf),
@@ -225,8 +225,8 @@ contract("assert svg", ([alice, bob]) => {
               id<Quote>({
                 type: "quote",
                 id: prev,
-                cx: uint8(25 + 100 * (i % 2)),
-                cy: uint8(25 + 100 * Math.floor(i / 2)),
+                cx: uint8(50 + 150 * (i % 2)),
+                cy: uint8(50 + 150 * Math.floor(i / 2)),
                 size: stepUint(100, 2),
                 rotate: stepUint(0, 3),
               })
