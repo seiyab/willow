@@ -31,8 +31,12 @@ contract Willow is ERC721Enumerable {
     return id;
   }
 
+  function preview(bytes calldata data) public view returns (string memory) {
+    return drawer.draw(data);
+  }
+
   function draw(uint256 tokenID) public view returns (string memory) {
-    return drawer.draw(tokenID);
+    return drawer.drawToken(tokenID);
   }
 
   function length() public view returns (uint256) {
@@ -42,7 +46,7 @@ contract Willow is ERC721Enumerable {
   function tokenURI(uint256 tokenID) public view override returns (string memory) {
     require(_exists(tokenID), 'token doesn\'t exist');
     string memory name = 'No Title';
-    string memory svg = drawer.draw(tokenID);
+    string memory svg = drawer.drawToken(tokenID);
     return string(abi.encodePacked(
       'data:application/json;base64,',
       Base64.encode(bytes(abi.encodePacked(
