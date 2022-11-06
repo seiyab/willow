@@ -9,11 +9,11 @@ const Header: React.FC<Props> = () => {
   return (
     <header>
       <div>
-        <Link href="/" passHref>
-          <a className="link top">Willow</a>
+        <Link href="/" className="link top">
+          Willow
         </Link>
-        <Link href="/gallery">
-          <a className="link">Gallery</a>
+        <Link href="/gallery" className="link">
+          Gallery
         </Link>
       </div>
       <style jsx>{`
@@ -30,12 +30,12 @@ const Header: React.FC<Props> = () => {
           width: 800px;
           column-gap: 15px;
         }
-        .link {
+        div :global(.link) {
           color: #fff;
           text-decoration: none;
           font-size: 16px;
         }
-        .top.link {
+        div :global(.top.link) {
           font-size: 24px;
         }
       `}</style>
