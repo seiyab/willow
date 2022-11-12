@@ -117,6 +117,10 @@ const Canvas: React.FC = () => {
         return null;
       })}
       <style jsx>{`
+        svg {
+          display: block;
+        }
+
         svg:hover {
           ${tool !== "cursor" ? "cursor: crosshair;" : ""}
         }

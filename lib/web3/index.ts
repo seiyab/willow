@@ -23,3 +23,9 @@ export const useDraw = (id: number): AsyncResult<string> =>
     const wi = await willow();
     return await wi.draw(id);
   });
+
+export const usePreview = (data: string): AsyncResult<string> =>
+  usePromise(`willow.preview(${data})`, async () => {
+    const wi = await willow();
+    return await wi.preview(data);
+  });

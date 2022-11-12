@@ -15,7 +15,7 @@ const Editor: React.FC = () => {
           <div className="flex-center">
             <Submit />
           </div>
-          <div className="flex-center">
+          <div className="flex-center canvas-container">
             <div className="center">
               <Frame>
                 <Canvas />
@@ -44,6 +44,10 @@ const Editor: React.FC = () => {
           }
           .center {
             margin: 0 auto;
+          }
+
+          .canvas-container {
+            margin-top: 10px;
           }
 
           .toolbox-container {
