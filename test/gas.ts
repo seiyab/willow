@@ -30,7 +30,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 199_971);
+      return assert.equal(tx.receipt.gasUsed, 243_134);
     });
 
     it("2 rects", async () => {
@@ -56,7 +56,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 204_129);
+      return assert.equal(tx.receipt.gasUsed, 282_207);
     });
 
     it("100 rects", async () => {
@@ -76,7 +76,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 1_145_949);
+      return assert.equal(tx.receipt.gasUsed, 5_319_354);
     });
   });
 
@@ -95,7 +95,7 @@ contract("measure gas cost", ([alice]) => {
       { from: alice }
     );
 
-    return assert.equal(tx.receipt.gasUsed, 207_436);
+    return assert.equal(tx.receipt.gasUsed, 254_495);
   });
 
   describe("quote", () => {
@@ -133,7 +133,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 237_206);
+      return assert.equal(tx.receipt.gasUsed, 368_523);
     });
 
     it("quote of quote", async () => {
@@ -167,7 +167,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 237_206);
+      return assert.equal(tx.receipt.gasUsed, 476_295);
     });
   });
 
@@ -188,7 +188,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 215_809);
+      return assert.equal(tx.receipt.gasUsed, 288_484);
     });
 
     it("10 points", async () => {
@@ -206,7 +206,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 215_977);
+      return assert.equal(tx.receipt.gasUsed, 382_078);
     });
 
     it("100 points", async () => {
@@ -224,7 +224,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 374_534);
+      return assert.equal(tx.receipt.gasUsed, 1_839_676);
     });
   });
 
@@ -291,7 +291,7 @@ contract("measure gas cost", ([alice]) => {
         { from: alice }
       );
 
-      return assert.equal(tx.receipt.gasUsed, 778_745);
+      return assert.equal(tx.receipt.gasUsed, 3_477_116);
     });
   });
 });
