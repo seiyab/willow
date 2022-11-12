@@ -25,7 +25,7 @@ contract Willow is ERC721Enumerable {
   }
 
   function create(bytes calldata data) external returns (uint256) {
-    drawer.validate(data);
+    preview(data);
     uint256 id = repository.append(data);
     _safeMint(msg.sender, id);
     return id;
