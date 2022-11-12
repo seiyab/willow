@@ -29,10 +29,22 @@ library Lib {
   }
 
   function concat(bytes[] memory bs) public pure returns (bytes memory) {
-    bytes memory b;
-    for (uint i = 0; i < bs.length; ++i) {
-      b = abi.encodePacked(b, bs[i]);
+    return concatRecur(bs, 0, bs.length);
+  }
+
+  function concatRecur(bytes[] memory bs, uint from, uint to) internal pure returns (bytes memory) {
+    // we can change 8 to another uint greater than 1. it will affect computational cost.
+    if (to - from < 8) {
+      bytes memory buf;
+      for (uint i = from; i < to; ++i) {
+        buf = abi.encodePacked(buf, bs[i]);
+      }
+      return buf;
     }
-    return b;
+    uint mid = (from + to) / 2;
+    return abi.encodePacked(
+      concatRecur(bs, from, mid),
+      concatRecur(bs, mid, to)
+    );
   }
 }
