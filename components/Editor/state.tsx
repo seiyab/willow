@@ -45,7 +45,7 @@ const id = createID();
 
 export type Tool = GraphicalElementType | "cursor";
 
-export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
+const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
   React.useMemo(() => {
     const mutate =
       <T extends unknown[]>(proc: (prev: State, ...args: T) => void) =>
@@ -69,6 +69,16 @@ export const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
         const target = draft.elements.find((e) => e.id === id);
         if (target === undefined) return;
         target.value = newElem;
+      }),
+      swapElements: mutate((draft, i: number, j: number) => {
+        if (i < 0) return;
+        if (j < 0) return;
+        if (!(i < draft.elements.length)) return;
+        if (!(j < draft.elements.length)) return;
+        [draft.elements[i], draft.elements[j]] = [
+          draft.elements[j],
+          draft.elements[i],
+        ];
       }),
       clearElements: mutate((draft) => {
         draft.elements = [];
