@@ -7,6 +7,17 @@ const ElementSelector: React.FC = () => {
   const selectedElement = useSelector(({ state }) => state.selectedElement);
   const elements = useSelector(({ state }) => state.elements);
   const selectElement = useSelector(({ actions }) => actions.selectElement);
+  const swapElements = useSelector(({ actions }) => actions.swapElements);
+  const handleClickTop = (id: string) => () => {
+    const i = elements.findIndex((e) => e.id === id);
+    if (i < 0) return;
+    swapElements(i, i - 1);
+  };
+  const handleClickBottom = (id: string) => () => {
+    const i = elements.findIndex((e) => e.id === id);
+    if (i < 0) return;
+    swapElements(i, i + 1);
+  };
   return (
     <div>
       <ul className="elements">
@@ -26,10 +37,39 @@ const ElementSelector: React.FC = () => {
               <SVGElem value={value} />
             </svg>
             <span>{`${value.type} #${id}`}</span>
+            <div className="buttons">
+              <button className="order-button-top" onClick={handleClickTop(id)}>
+                <svg
+                  width="10"
+                  height="7"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 10 7"
+                >
+                  <polygon points="0,7 10,7 5,0" fill="#555" />
+                </svg>
+              </button>
+              <button
+                className="order-button-bottom"
+                onClick={handleClickBottom(id)}
+              >
+                <svg
+                  width="10"
+                  height="7"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 10 7"
+                >
+                  <polygon points="0,0 10,0 5,7" fill="#555" />
+                </svg>
+              </button>
+            </div>
           </li>
         ))}
       </ul>
       <style jsx>{`
+        svg {
+          display: block;
+        }
+
         .selected {
           background-color: #eee;
         }
@@ -51,6 +91,20 @@ const ElementSelector: React.FC = () => {
         .element {
           border: solid #aaa;
           border-radius: 3px;
+        }
+
+        .buttons {
+          display: flex;
+          flex-direction: column;
+          row-gap: 4px;
+        }
+
+        .order-button-top {
+          padding-top: 5px;
+        }
+
+        .order-button-bottom {
+          padding-bottom: 5px;
         }
       `}</style>
     </div>
