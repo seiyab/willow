@@ -1,23 +1,38 @@
 import * as React from "react";
 import { useSelector } from "components/Editor/state";
 import { encode } from "lib/encode/encoder";
-import { web3, willow } from "lib/web3";
+import { useAccounts, useRequestACcounts, web3, willow } from "lib/web3";
 import Previewer from "components/Previewer";
 import Frame from "components/Frame";
+import { do_ } from "@seiyab/do-expr";
 
 const Submit: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const elements = useSelector(({ state }) => state.elements);
   const clearElements = useSelector(({ actions }) => actions.clearElements);
+  const accounts = useAccounts();
+  const request = useRequestACcounts();
   const submit = async () => {
-    const wi = await willow();
-    const accounts = await web3.eth.requestAccounts();
-    await wi.create(encode(elements.map(({ value }) => value)), {
-      from: accounts[0],
-    });
-    clearElements();
+    if (accounts.isSuccess && accounts.data.length > 0) {
+      const wi = await willow();
+      await wi.create(encode(elements.map(({ value }) => value)), {
+        from: accounts.data[0],
+      });
+      clearElements();
+    }
     setOpen(false);
   };
+  React.useEffect(() => {
+    if (open) {
+      do_(async () => {
+        try {
+          await request();
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    }
+  }, [open, request]);
   return (
     <div className="root">
       <button
@@ -39,7 +54,11 @@ const Submit: React.FC = () => {
             </Frame>
           </div>
           <div className="button-group">
-            <button type="button" onClick={() => submit()}>
+            <button
+              type="button"
+              disabled={(accounts.data?.length ?? 0) === 0}
+              onClick={() => submit()}
+            >
               Confirm
             </button>
             <button type="button" onClick={() => setOpen(false)}>
@@ -60,8 +79,13 @@ const Submit: React.FC = () => {
           border-radius: 4px;
         }
 
-        button[aria-pressed="true"] {
+        button[aria-pressed="true"],
+        button[disabled] {
           background-color: #ddd;
+        }
+
+        button[disabled] {
+          cursor: default;
         }
 
         .dropdown {
