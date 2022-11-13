@@ -1,12 +1,14 @@
+import * as React from "react";
 import Web3 from "web3";
 import contract from "@truffle/contract";
 import { WillowInstance } from "types/truffle-contracts";
 import { AsyncResult, usePromise } from "lib/swr";
+import artifact from "build/contracts/Willow.json";
+import { useSWRConfig } from "swr";
 
 export const web3 = new Web3(Web3.givenProvider);
 
 export const willow = async (): Promise<WillowInstance> => {
-  const artifact = require("build/contracts/Willow.json");
   const willowContract = contract(artifact);
   willowContract.setProvider(web3.currentProvider);
   return await willowContract.deployed();
@@ -29,3 +31,16 @@ export const usePreview = (data: string): AsyncResult<string> =>
     const wi = await willow();
     return await wi.preview(data);
   });
+
+export const useAccounts = (): AsyncResult<string[]> =>
+  usePromise("web3.eth.getAccounts()", async () => {
+    return await web3.eth.getAccounts();
+  });
+
+export const useRequestACcounts = (): (() => Promise<void>) => {
+  const { mutate } = useSWRConfig();
+  return React.useCallback(async () => {
+    await web3.eth.requestAccounts();
+    mutate("web3.eth.getAccounts()");
+  }, [mutate]);
+};
