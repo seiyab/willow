@@ -10,13 +10,12 @@ type Props = {
   size?: number;
 };
 
-const image = css.resolve`
-  * {
-    display: block;
-  }
-`;
-
 const Viewer: React.FC<Props> = ({ elements, size = 250 }) => {
+  const image = css.resolve`
+    * {
+      display: block;
+    }
+  `;
   const p = usePreview(encode(elements));
   if (p.isSuccess)
     return (
