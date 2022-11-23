@@ -1,5 +1,6 @@
 import * as React from "react";
 import Image from "next/image";
+import css from "styled-jsx/css";
 import { GraphicalElement } from "lib/element";
 import { usePreview } from "lib/web3";
 import { encode } from "lib/encode/encoder";
@@ -10,22 +11,23 @@ type Props = {
 };
 
 const Viewer: React.FC<Props> = ({ elements, size = 250 }) => {
+  const image = css.resolve`
+    * {
+      display: block;
+    }
+  `;
   const p = usePreview(encode(elements));
   if (p.isSuccess)
     return (
       <span>
         <Image
-          className="image"
+          className={image.className}
           src={`data:image/svg+xml;utf8,${p.data}`}
           alt=""
           width={size}
           height={size}
         />
-        <style jsx>{`
-          :global(.image) {
-            display: block;
-          }
-        `}</style>
+        {image.styles}
       </span>
     );
   return (

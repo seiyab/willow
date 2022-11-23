@@ -1,7 +1,17 @@
 import assert from "assert";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import sinon from "sinon";
+import css from "styled-jsx/css";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Editor from ".";
 import { click, drag } from "lib/testing";
+
+before(() => {
+  sinon.replace(css, "resolve", () => ({ className: "", styles: <></> }));
+});
+
+after(() => {
+  sinon.restore();
+});
 
 describe("<Editor />", () => {
   it("draw a rect", async () => {

@@ -18,7 +18,6 @@ const Header: React.FC<Props> = () => {
       </div>
       <style jsx>{`
         header {
-          background-color: #222;
           color: #fff;
           padding-top: 10px;
           padding-bottom: 10px;
@@ -26,8 +25,6 @@ const Header: React.FC<Props> = () => {
         div {
           display: flex;
           align-items: center;
-          margin: 0 auto;
-          width: 800px;
           column-gap: 15px;
         }
         div :global(.link) {
