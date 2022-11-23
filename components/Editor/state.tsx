@@ -80,6 +80,11 @@ const useActions = (dispatch: React.Dispatch<SetStateAction<State>>) =>
           draft.elements[i],
         ];
       }),
+      removeElement: mutate((draft, id: string) => {
+        const target = draft.elements.findIndex((e) => e.id === id);
+        if (target < 0) return;
+        draft.elements.splice(target, 1);
+      }),
       clearElements: mutate((draft) => {
         draft.elements = [];
       }),
