@@ -49,13 +49,8 @@ const Header: Container = ({ className, children }) => {
   );
 };
 
-const content = css.resolve`
-  * {
-    margin-top: 20px;
-  }
-`;
 const Content: Container = ({ className, children }) => {
-  return <Row className={`${className} ${content.className}`}>{children}</Row>;
+  return <Row className={className}>{children}</Row>;
 };
 
 const PageLayout = {
