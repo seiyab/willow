@@ -8,6 +8,7 @@ const ElementSelector: React.FC = () => {
   const elements = useSelector(({ state }) => state.elements);
   const selectElement = useSelector(({ actions }) => actions.selectElement);
   const swapElements = useSelector(({ actions }) => actions.swapElements);
+  const removeElement = useSelector(({ actions }) => actions.removeElement);
   const handleClickTop = (id: string) => () => {
     const i = elements.findIndex((e) => e.id === id);
     if (i < 0) return;
@@ -62,6 +63,17 @@ const ElementSelector: React.FC = () => {
                 </svg>
               </button>
             </div>
+            <button onClick={() => removeElement(id)}>
+              <svg
+                width="10"
+                height="10"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 10 10"
+              >
+                <polyline stroke="#f00" stroke-width="2" points="1,1 9,9" />
+                <polyline stroke="#f00" stroke-width="2" points="1,9 9,1" />
+              </svg>
+            </button>
           </li>
         ))}
       </ul>
@@ -77,7 +89,7 @@ const ElementSelector: React.FC = () => {
         .element-li {
           display: flex;
           align-items: center;
-          column-gap: 3px;
+          column-gap: 5px;
         }
 
         .element-li:hover {
