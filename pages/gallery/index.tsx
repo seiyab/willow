@@ -5,13 +5,14 @@ import Header from "components/Header";
 import PageLayout from "components/PageLayout";
 import Viewer from "components/Viewer";
 import { range } from "lib/util";
-import { useLength } from "lib/web3";
+import { useLength, useWillow } from "lib/web3";
 
 const tokensPerPage = 6;
 
 const Gallery: React.FC = () => {
   const length = useLength();
   const [offset, setOffset] = React.useState(0);
+  const willow = useWillow();
   const handleOlder = () => {
     if (!length.isSuccess) return;
     setOffset((prev) =>
@@ -40,8 +41,19 @@ const Gallery: React.FC = () => {
                   <Frame>
                     <Viewer id={i} size={300} />
                   </Frame>
-                  <div>
+                  <div className="description">
                     <span>token ID: {i}</span>
+                    {willow.isSuccess && (
+                      <span>
+                        <a
+                          href={`https://opensea.io/assets/ethereum/${willow.data.address}/${i}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View in OpenSea
+                        </a>
+                      </span>
+                    )}
                   </div>
                 </li>
               ))}
@@ -69,6 +81,13 @@ const Gallery: React.FC = () => {
 
         li {
           display: block;
+        }
+
+        .description {
+          margin-top: 5px;
+          display: flex;
+          flex-direction: column;
+          align-items: left;
         }
 
         .buttons {

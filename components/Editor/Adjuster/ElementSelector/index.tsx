@@ -70,8 +70,8 @@ const ElementSelector: React.FC = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 10 10"
               >
-                <polyline stroke="#f00" stroke-width="2" points="1,1 9,9" />
-                <polyline stroke="#f00" stroke-width="2" points="1,9 9,1" />
+                <polyline stroke="#f00" strokeWidth="2" points="1,1 9,9" />
+                <polyline stroke="#f00" strokeWidth="2" points="1,9 9,1" />
               </svg>
             </button>
           </li>
