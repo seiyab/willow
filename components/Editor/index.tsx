@@ -10,56 +10,50 @@ import Adjuster from "./Adjuster";
 const Editor: React.FC = () => {
   return (
     <div>
-      <div className="flex-top center">
+      <div className="upper">
         <div>
-          <div className="flex-center">
+          <div>
             <Submit />
           </div>
-          <div className="flex-center canvas-container">
-            <div className="center">
-              <Frame>
-                <Canvas />
-              </Frame>
-            </div>
+          <div className="frame-container">
+            <Frame>
+              <Canvas />
+            </Frame>
           </div>
-          <div className="flex-center toolbox-container">
-            <div className="center">
-              <Toolbox />
-            </div>
-          </div>
-          <div className="quote-selector-container">
-            <QuoteSelector />
+          <div className="toolbox-container">
+            <Toolbox />
           </div>
         </div>
         <div className="adjuster-container">
           <Adjuster />
         </div>
       </div>
+      <div className="quote-selector-container">
+        <QuoteSelector />
+      </div>
       <style jsx>
         {`
-          .flex-top {
+          .upper {
             display: flex;
-            align-items: top;
             justify-content: center;
           }
-          .center {
-            margin: 0 auto;
-          }
 
-          .canvas-container {
-            margin-top: 10px;
-          }
-
-          .toolbox-container {
-            margin-top: 10px;
-          }
-
-          .quote-selector-container {
+          .frame-container {
             margin-top: 10px;
           }
 
           .adjuster-container {
-            margin-left: 30px;
+            margin-left: 20px;
+          }
+
+          .toolbox-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+          }
+
+          .quote-selector-container {
+            margin-top: 10px;
           }
         `}
       </style>

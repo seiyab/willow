@@ -1,4 +1,5 @@
 import { useDraw } from "lib/web3";
+import css from "styled-jsx/css";
 import Image from "next/image";
 import * as React from "react";
 
@@ -9,14 +10,23 @@ type Props = {
 
 const Viewer: React.FC<Props> = ({ id, size = 250 }) => {
   const p = useDraw(id);
+  const image = css.resolve`
+    * {
+      display: block;
+    }
+  `;
   if (p.isSuccess)
     return (
-      <Image
-        src={`data:image/svg+xml;utf8,${p.data}`}
-        alt=""
-        width={size}
-        height={size}
-      />
+      <>
+        <Image
+          className={image.className}
+          src={`data:image/svg+xml;utf8,${p.data}`}
+          alt=""
+          width={size}
+          height={size}
+        />
+        {image.styles}
+      </>
     );
   return (
     <>
