@@ -14,6 +14,11 @@ export const willow = async (): Promise<WillowInstance> => {
   return await willowContract.deployed();
 };
 
+export const useWillow = (): AsyncResult<WillowInstance> =>
+  usePromise("willow", async () => {
+    return await willow();
+  });
+
 export const useLength = (): AsyncResult<number> =>
   usePromise("willow.length()", async () => {
     const wi = await willow();
