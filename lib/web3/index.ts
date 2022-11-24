@@ -11,7 +11,7 @@ export const web3 = new Web3(Web3.givenProvider);
 export const willow = async (): Promise<WillowInstance> => {
   const willowContract = contract(artifact);
   willowContract.setProvider(web3.currentProvider);
-  return await willowContract.deployed();
+  return await willowContract.at("0x04caaA4842bc966c569C417E93481f2Bb9F59fB3");
 };
 
 export const useWillow = (): AsyncResult<WillowInstance> =>
